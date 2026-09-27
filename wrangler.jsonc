@@ -1,12 +1,17 @@
 {
-  // Static site for Cloudflare Pages. Project name is unchanged so an
-  // existing Pages project can keep deploying this directory.
+  // Cloudflare Worker plus static assets. The name stays douglassemail so the
+  // existing Workers Builds project keeps deploying this repository.
+  // An assets-only Worker has no script, so Cloudflare refuses variables
+  // ("Variables cannot be added to a Worker that only has static assets").
+  // "main" is what makes CONTACT_EMAIL possible. Do not put that value here.
   "name": "douglassemail",
+  "main": "src/worker.js",
   "compatibility_date": "2026-09-20",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    // Every request enters the Worker. /api/contact is handled in src/worker.js;
+    // other paths are served with env.ASSETS.fetch so directory indexes stay put.
+    "run_worker_first": true
   }
-  // Contact mail: set CONTACT_EMAIL in the Cloudflare Pages dashboard
-  // (Settings → Environment variables) for Production and Preview.
-  // Do not commit the address. functions/api/contact.js reads context.env.CONTACT_EMAIL.
 }

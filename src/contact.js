@@ -1,6 +1,6 @@
 // POST /api/contact
-// The destination inbox is CONTACT_EMAIL, a Pages environment variable.
-// This function delivers through FormSubmit and never returns that address.
+// The destination inbox is CONTACT_EMAIL, a Worker variable or secret.
+// This module delivers through FormSubmit and never returns that address.
 
 const MAX_BODY = 12000;
 const WINDOW_MS = 60 * 1000;
@@ -83,8 +83,7 @@ function singleLine(value) {
   return String(value ?? "").replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
-export async function onRequest(context) {
-  const request = context.request;
+export async function handleContact(request, env = {}) {
   const accept = (request.headers.get("accept") || "").toLowerCase();
   const type = (request.headers.get("content-type") || "").toLowerCase();
   const asJson = type.includes("application/json") || accept.includes("application/json");
@@ -151,7 +150,6 @@ export async function onRequest(context) {
   if (!message) return reply({ ok: false, error: "Please add a message." }, 400);
   if (message.length > 4000) return reply({ ok: false, error: "That message is too long." }, 400);
 
-  const env = context.env || {};
   const to = typeof env.CONTACT_EMAIL === "string" ? env.CONTACT_EMAIL.trim() : "";
   if (!to || !EMAIL_RE.test(to)) {
     return reply({ ok: false, error: "The contact form is not available right now." }, 503);
