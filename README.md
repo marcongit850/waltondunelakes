@@ -24,7 +24,7 @@ Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. The pro
 
 `main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
-This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to FormSubmit, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` is a single variable or secret. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through FormSubmit.
+This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to Resend, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through the Resend HTTP API (`https://api.resend.com/emails`).
 
 The old Pages `functions/` folder and `_routes.json` are not used. Workers static assets ignore Pages Functions, which is why `/contact/` returned 200 while `/api/contact` returned 404. An assets-only Worker also cannot store variables (“Variables cannot be added to a Worker that only has static assets”), so `CONTACT_EMAIL` could not be saved until this script existed.
 
@@ -37,15 +37,18 @@ The old Pages `functions/` folder and `_routes.json` are not used. Workers stati
 - `/lakes/<slug>/` is one lake, for example `/lakes/western/`
 - `/contact/` is a short form for questions and corrections
 
-The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` only and does not put the address in the pages sent to the browser.
+The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` and the API key from `env.RESEND_API_KEY`. It does not put either value in the pages sent to the browser.
 
-After this change is merged and deployed, set the inbox in Cloudflare:
+The From address is Resend's free onboarding sender, `Coastal Dune Lakes <onboarding@resend.dev>`, so no custom domain is required for the first version. That sender can deliver only to the email address on the Resend account. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified in Resend, change `FROM` in `src/contact.js` to an address on that domain. No paid Resend plan is required for this form.
+
+After this change is merged and deployed, set the Worker values in Cloudflare:
 
 1. Open **Workers & Pages** → **douglassemail** → **Settings** → **Variables and Secrets**.
-2. Add `CONTACT_EMAIL` = `352marc@gmail.com` for Production. Add it for Preview too if that environment is offered.
-3. Redeploy after saving the variable.
+2. Keep `CONTACT_EMAIL` = `352marc@gmail.com` for Production. Add it for Preview too if that environment is offered.
+3. Add `RESEND_API_KEY` as a secret (or encrypted variable). Use the key from [Resend API keys](https://resend.com/api-keys), without a `Bearer` prefix. Add it for Preview too if that environment is offered.
+4. Redeploy after saving so the Worker picks up the secret.
 
-Do not commit the address in `wrangler.jsonc`. The Worker posts to FormSubmit's AJAX endpoint with this site's `Origin`, a `Referer` for the contact page, and FormSubmit's `_url` field. A server fetch without that web `Referer` is rejected as if the page were opened as an HTML file. The first accepted message still sends an activation email to the inbox; open it and confirm once. Until that link is confirmed, `POST /api/contact` returns HTTP 503 and says the form needs a one-time activation. Until `CONTACT_EMAIL` is set, it returns a different HTTP 503 instead of a static 404.
+Do not commit the address or the API key in `wrangler.jsonc`. Until `CONTACT_EMAIL` or `RESEND_API_KEY` is set, `POST /api/contact` returns HTTP 503.
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 

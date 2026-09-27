@@ -3,7 +3,8 @@
   // existing Workers Builds project keeps deploying this repository.
   // An assets-only Worker has no script, so Cloudflare refuses variables
   // ("Variables cannot be added to a Worker that only has static assets").
-  // "main" is what makes CONTACT_EMAIL possible. Do not put that value here.
+  // "main" is what makes CONTACT_EMAIL and RESEND_API_KEY possible.
+  // Do not put those values here.
   "name": "douglassemail",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-20",
