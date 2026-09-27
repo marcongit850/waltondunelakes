@@ -1,7 +1,7 @@
 import { handleContact } from "./contact.js";
 
-// Same 301s as `_redirects`. Asset redirects are not applied to responses
-// this Worker serves, and `run_worker_first` sends every request here first.
+// Same 301s as `_redirects`. The asset router applies `_redirects` for normal
+// page views. These repeats cover a request that reaches the Worker instead.
 export const LEGACY_REDIRECTS = new Map([
   ["/get-involved", "/"],
   ["/get-involved/", "/"],

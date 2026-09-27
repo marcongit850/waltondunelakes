@@ -292,7 +292,10 @@ await check("does not bake the inbox into the Worker or Wrangler config", async 
   assert.match(wrangler, /"main"\s*:\s*"src\/worker\.js"/);
   assert.match(wrangler, /"binding"\s*:\s*"ASSETS"/);
   assert.match(wrangler, /"directory"\s*:\s*"\."/);
-  assert.match(wrangler, /"run_worker_first"\s*:\s*true/);
+  assert.match(wrangler, /"run_worker_first"\s*:\s*\[/);
+  assert.match(wrangler, /"\/api\/contact"/);
+  assert.match(wrangler, /"\/api\/contact\/"/);
+  assert.doesNotMatch(wrangler, /"run_worker_first"\s*:\s*true/);
   assert.doesNotMatch(wrangler, /"vars"\s*:/);
   for (const source of [wrangler, contactSource, workerSource]) {
     assert.equal(source.includes("352marc@gmail.com"), false);

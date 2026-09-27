@@ -22,11 +22,13 @@ node test/contact-function.test.mjs
 
 Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. The project name is still `douglassemail`.
 
-`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is `true`, so every request enters the Worker. `POST /api/contact` and `POST /api/contact/` run the contact handler. Every other path is served with `env.ASSETS.fetch(request)`, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, and `images/`).
+`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, and `images/`).
+
+This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to FormSubmit, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` is a single variable or secret. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through FormSubmit.
 
 The old Pages `functions/` folder and `_routes.json` are not used. Workers static assets ignore Pages Functions, which is why `/contact/` returned 200 while `/api/contact` returned 404. An assets-only Worker also cannot store variables (“Variables cannot be added to a Worker that only has static assets”), so `CONTACT_EMAIL` could not be saved until this script existed.
 
-`.assetsignore` keeps the Worker source, tests, Wrangler config, and this README out of the public upload. Visits to `/get-involved/`, `/impact/`, and `/membership/` still redirect to the home page. Those rules live in `_redirects` and are repeated in `src/worker.js`, because redirects in `_redirects` are not applied to responses the Worker serves.
+`.assetsignore` keeps the Worker source, tests, Wrangler config, and this README out of the public upload. Visits to `/get-involved/`, `/impact/`, and `/membership/` still redirect to the home page. Those rules live in `_redirects`, which the asset router applies on ordinary page views. `src/worker.js` repeats them when a request reaches the Worker instead.
 
 ## Pages
 
