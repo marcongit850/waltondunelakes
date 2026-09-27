@@ -12,17 +12,17 @@ From the repository root:
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080/`. That server only shows the static pages. Contact delivery is the Worker in `src/worker.js`. Check it with:
+Open `http://localhost:8080/`. That server only shows the static pages. Contact delivery is the Worker in `src/worker.js`. Check the contact Worker, shared footer, and shared header with:
 
 ```bash
-node test/contact-function.test.mjs
+npm test
 ```
 
 ## Deploy
 
 Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. The project name is still `douglassemail`.
 
-`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, and `images/`).
+`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
 This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to FormSubmit, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` is a single variable or secret. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through FormSubmit.
 
@@ -49,6 +49,6 @@ Do not commit the address in `wrangler.jsonc`. The Worker posts to FormSubmit's 
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 
-Shared files are `styles.css`, `site.js` (menu, map highlighting, and the contact form), and `footer.js` (the site footer). Edit `footer.js` to change footer navigation and the Resources links on every page that has a footer. The script fills in relative Home, Lakes, and Contact hrefs from the page depth. Redirect pages do not load it. Photographs live in `images/`. `CREDITS.md` lists which pictures are a named lake, including the public-domain U.S. Geological Survey aerials in `images/lakes/`.
+Shared files are `styles.css`, `site.js` (menu, map highlighting, and the contact form), `header.js` (the site header and primary nav), and `footer.js` (the site footer). Edit `header.js` to change the brand and primary navigation on every page that has a header. Edit `footer.js` to change footer navigation and the Resources links on every page that has a footer. Each script fills in relative hrefs from the page depth and marks the current page with `aria-current` where that page already did. Redirect pages do not load them. Photographs live in `images/`. `CREDITS.md` lists which pictures are a named lake, including the public-domain U.S. Geological Survey aerials in `images/lakes/`.
 
 Acreages are approximate and vary by source. Photo credits stay beside the pictures and in `CREDITS.md`. The footer notes that the site is an independent educational resource, lists Resources, and links to the contact page.
