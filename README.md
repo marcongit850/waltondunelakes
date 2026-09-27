@@ -26,4 +26,4 @@ Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oys
 
 Shared files are `styles.css` and `site.js` (menu and map highlighting only). Photographs live in `images/`. `CREDITS.md` lists which pictures are a named lake, including the public-domain U.S. Geological Survey aerials in `images/lakes/`.
 
-Acreages are approximate and vary by source. The site footer says where the figures come from, without linking to addresses this repo has not verified.
+Acreages are approximate and vary by source. Photo credits stay beside the pictures and in `CREDITS.md`. The footer is a short note that the site is an independent educational resource.

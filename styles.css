@@ -658,7 +658,7 @@ p { text-wrap: pretty; }
 .site-footer {
   background: var(--gulf-deep);
   color: #d5e3e6;
-  padding: 2.4rem 0 2.8rem;
+  padding: 1.7rem 0 1.9rem;
 }
 .footer-grid {
   display: grid;
@@ -670,8 +670,13 @@ p { text-wrap: pretty; }
   margin: 0 0 0.6rem;
   color: white;
 }
-.legal { margin: 0; font-size: 0.95rem; }
-.legal + .legal { margin-top: 0.7rem; }
+.legal {
+  margin: 0.15rem 0 0;
+  max-width: 38rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #b7cdd2;
+}
 .site-footer a { color: white; }
 .footer-nav { display: flex; flex-direction: column; gap: 0.4rem; }
 .footer-nav a { font-weight: 600; text-decoration: none; }
