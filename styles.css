@@ -309,101 +309,55 @@ p { text-wrap: pretty; }
   box-shadow: var(--shadow);
   overflow: hidden;
 }
-.axis {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 0;
-  padding: 0.85rem 1rem 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--muted);
-}
 .map-scroll {
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  background: #f7f4ee;
+  background: #e8f4fb;
+  -webkit-overflow-scrolling: touch;
 }
 .map-scroll:focus-visible { outline-offset: -3px; }
-.coast-map { display: block; width: 100%; min-width: 920px; height: auto; }
-.coast-map .land { fill: #f4f1e8; }
-.coast-map .tint { opacity: 0.95; }
-.coast-map .beach { fill: #ead7b4; }
-.coast-map .gulf { fill: #1b5563; }
-.coast-map .road { fill: none; stroke: #5c5348; stroke-width: 2.25; }
-.coast-map .outfall {
-  fill: none;
-  stroke: #14343c;
-  stroke-width: 1.35;
-  stroke-dasharray: 3 4;
-  opacity: 0.8;
+.illustrated-map {
+  position: relative;
+  width: 100%;
+  min-width: 920px;
+  line-height: 0;
+  background: #e8f4fb;
 }
-.coast-map .outfall.iconic { stroke-width: 2.4; opacity: 1; }
-.coast-map .connect {
-  fill: none;
-  stroke: #14343c;
-  stroke-width: 2;
-  stroke-dasharray: 1.5 3;
+.illustrated-map img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
-.coast-map .lake-shape { fill: #b7d4d6; stroke: #14343c; stroke-width: 1.6; }
-.coast-map .lake-num {
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 700;
-  fill: #102e36;
-  text-anchor: middle;
-  dominant-baseline: central;
+.illustrated-map svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
-.coast-map .map-label {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
-  fill: #243430;
-  text-anchor: middle;
+.illustrated-map a {
+  pointer-events: auto;
+  cursor: pointer;
 }
-.coast-map .map-small {
-  font-family: var(--sans);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  fill: #3e4c48;
-  text-anchor: middle;
+.illustrated-map .lake-hit {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 3;
+  stroke-linejoin: round;
 }
-.coast-map .map-small.start { text-anchor: start; }
-.coast-map .map-small.end { text-anchor: end; }
-.coast-map .gulf-label {
-  font-family: var(--serif);
-  font-size: 16px;
-  fill: #d5eef2;
-  text-anchor: middle;
-}
-.lake-link { cursor: pointer; }
-.lake-link .lake-hit { fill: transparent; }
-.lake-link:hover .lake-shape,
-.lake-link:focus-visible .lake-shape,
-.lake-link.is-active .lake-shape {
-  fill: #f4e1a6;
+.illustrated-map a:hover .lake-hit,
+.illustrated-map a:focus-visible .lake-hit,
+.illustrated-map a.is-active .lake-hit {
+  fill: rgba(244, 225, 166, 0.62);
   stroke: #102e36;
-  stroke-width: 2.4;
 }
+.illustrated-map a:focus-visible { outline: none; }
 .map-caption {
   margin: 0;
   padding: 0.85rem 1rem 1rem;
   background: white;
   color: var(--ink);
   min-height: 3.2rem;
-}
-.legend {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem 1.5rem;
-  margin: 1rem 0 0;
-  padding: 0 0 0 1.1rem;
-  color: var(--muted);
-  font-size: 0.95rem;
 }
 .region-key { margin: 0.8rem 0 0; color: var(--muted); max-width: 70ch; }
 
@@ -722,7 +676,6 @@ p { text-wrap: pretty; }
   .facts article:nth-child(even) { box-shadow: inset 1px 0 0 var(--line); }
   .facts article:nth-child(4) { box-shadow: inset 1px 0 0 var(--line), inset 0 1px 0 var(--line); }
   .glance { order: -1; }
-  .legend { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
