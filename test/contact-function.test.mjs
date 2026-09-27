@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-
-const source = await readFile(new URL("../functions/api/contact.js", import.meta.url), "utf8");
-const { onRequest } = await import("data:text/javascript," + encodeURIComponent(source));
+import { handleContact } from "../src/contact.js";
+import worker, { LEGACY_REDIRECTS } from "../src/worker.js";
 
 const INBOX = "inbox@example.com";
 let fetchCalls = [];
@@ -31,7 +30,7 @@ async function post(body, { ip = "203.0.113.10", env = { CONTACT_EMAIL: INBOX },
     },
     body: payload,
   });
-  const response = await onRequest({ request, env });
+  const response = await handleContact(request, env);
   const text = await response.text();
   let json = null;
   try {
@@ -166,7 +165,7 @@ await check("returns an HTML page for a normal form post", async () => {
     },
     body,
   });
-  const response = await onRequest({ request, env: { CONTACT_EMAIL: INBOX } });
+  const response = await handleContact(request, { CONTACT_EMAIL: INBOX });
   const text = await response.text();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /text\/html/);
@@ -177,10 +176,10 @@ await check("returns an HTML page for a normal form post", async () => {
 });
 
 await check("rejects non-POST and rate-limits a busy address", async () => {
-  const get = await onRequest({
-    request: new Request("https://douglassemail.com/api/contact", { method: "GET" }),
-    env: { CONTACT_EMAIL: INBOX },
-  });
+  const get = await handleContact(
+    new Request("https://douglassemail.com/api/contact", { method: "GET" }),
+    { CONTACT_EMAIL: INBOX },
+  );
   assert.equal(get.status, 405);
 
   installFetch(async () => new Response(JSON.stringify({ success: true }), { status: 200 }));
@@ -192,6 +191,118 @@ await check("rejects non-POST and rate-limits a busy address", async () => {
   const blocked = await post(valid, { ip });
   assert.equal(blocked.response.status, 429);
   restoreFetch();
+});
+
+await check("routes contact through the Worker and other URLs through ASSETS", async () => {
+  const seen = [];
+  const env = {
+    CONTACT_EMAIL: INBOX,
+    ASSETS: {
+      fetch(request) {
+        seen.push(new URL(request.url).pathname);
+        return new Response("static", {
+          status: 200,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        });
+      },
+    },
+  };
+
+  for (const path of ["/", "/contact/", "/lakes/eastern/", "/styles.css", "/site.js"]) {
+    const response = await worker.fetch(new Request(`https://douglassemail.com${path}`), env);
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), "static");
+  }
+  assert.deepEqual(seen, ["/", "/contact/", "/lakes/eastern/", "/styles.css", "/site.js"]);
+
+  installFetch(async () => {
+    throw new Error("fetch should not run");
+  });
+  const missingName = await worker.fetch(
+    new Request("https://douglassemail.com/api/contact/", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json",
+        "cf-connecting-ip": "203.0.113.61",
+      },
+      body: JSON.stringify({ ...valid, name: "" }),
+    }),
+    env,
+  );
+  const missingNameBody = await missingName.json();
+  assert.equal(missingName.status, 400);
+  assert.match(missingNameBody.error, /name/i);
+  assert.equal(seen.length, 5);
+
+  installFetch(async () => new Response(JSON.stringify({ success: "true" }), { status: 200 }));
+  const sent = await worker.fetch(
+    new Request("https://douglassemail.com/api/contact", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json",
+        "cf-connecting-ip": "203.0.113.62",
+      },
+      body: JSON.stringify(valid),
+    }),
+    env,
+  );
+  assert.equal(sent.status, 200);
+  assert.deepEqual(await sent.json(), { ok: true });
+  assert.equal(fetchCalls[0].url, `https://formsubmit.co/ajax/${encodeURIComponent(INBOX)}`);
+  assert.equal(seen.length, 5);
+  restoreFetch();
+});
+
+await check("redirects retired pages and keeps that list aligned with _redirects", async () => {
+  const env = {
+    ASSETS: {
+      fetch() {
+        throw new Error("redirects should not read assets");
+      },
+    },
+  };
+  for (const path of LEGACY_REDIRECTS.keys()) {
+    const response = await worker.fetch(new Request(`https://douglassemail.com${path}`), env);
+    assert.equal(response.status, 301);
+    assert.equal(new URL(response.headers.get("location")).pathname, "/");
+  }
+
+  const rules = (await readFile(new URL("../_redirects", import.meta.url), "utf8"))
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith("#"))
+    .map((line) => line.split(/\s+/));
+  assert.deepEqual(
+    rules.map(([source]) => source).sort(),
+    [...LEGACY_REDIRECTS.keys()].sort(),
+  );
+  for (const [source, destination, code] of rules) {
+    assert.equal(LEGACY_REDIRECTS.get(source), destination);
+    assert.equal(code, "301");
+  }
+});
+
+await check("does not bake the inbox into the Worker or Wrangler config", async () => {
+  const wrangler = await readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8");
+  const contactSource = await readFile(new URL("../src/contact.js", import.meta.url), "utf8");
+  const workerSource = await readFile(new URL("../src/worker.js", import.meta.url), "utf8");
+  const ignore = await readFile(new URL("../.assetsignore", import.meta.url), "utf8");
+  assert.match(wrangler, /"main"\s*:\s*"src\/worker\.js"/);
+  assert.match(wrangler, /"binding"\s*:\s*"ASSETS"/);
+  assert.match(wrangler, /"directory"\s*:\s*"\."/);
+  assert.match(wrangler, /"run_worker_first"\s*:\s*\[/);
+  assert.match(wrangler, /"\/api\/contact"/);
+  assert.match(wrangler, /"\/api\/contact\/"/);
+  assert.doesNotMatch(wrangler, /"run_worker_first"\s*:\s*true/);
+  assert.doesNotMatch(wrangler, /"vars"\s*:/);
+  for (const source of [wrangler, contactSource, workerSource]) {
+    assert.equal(source.includes("352marc@gmail.com"), false);
+  }
+  assert.match(ignore, /^\/src$/m);
+  assert.match(ignore, /^\/test$/m);
+  assert.match(ignore, /^\/wrangler\.jsonc$/m);
 });
 
 if (process.exitCode) {

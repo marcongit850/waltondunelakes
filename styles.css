@@ -142,6 +142,15 @@ p { text-wrap: pretty; }
 .menu-toggle::-webkit-details-marker { display: none; }
 .menu-toggle::marker { content: ""; }
 .nav { display: flex; align-items: center; gap: 1.4rem; }
+/* Desktop keeps the nav visible. Closed <details> hides its content in
+   current Chrome, which would drop these links when the menu button is hidden. */
+@media (min-width: 721px) {
+  .nav-disclosure::details-content {
+    display: block;
+    height: auto;
+    content-visibility: visible;
+  }
+}
 .nav a {
   color: var(--ink);
   text-decoration: none;
@@ -472,6 +481,65 @@ p { text-wrap: pretty; }
 .bleed-photo figcaption {
   width: min(var(--wrap), calc(100% - 2rem));
   margin: 0.6rem auto 0;
+}
+
+.faq-list {
+  margin: 1.4rem 0 0;
+  border-top: 1px solid var(--line);
+}
+.faq-item {
+  border-bottom: 1px solid var(--line);
+  interpolate-size: allow-keywords;
+}
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-height: 3.25rem;
+  padding: 1rem 0.1rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::marker { content: ""; }
+.faq-item summary:hover { color: var(--gulf); }
+.faq-question { flex: 1 1 auto; }
+.faq-mark {
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  text-align: right;
+  font-weight: 400;
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--gulf);
+}
+.faq-mark::before { content: "+"; }
+.faq-item[open] .faq-mark::before { content: "\2212"; }
+.faq-answer p {
+  margin: 0;
+  padding: 0 0 1.15rem;
+  max-width: 68ch;
+  color: var(--muted);
+  font-weight: 400;
+}
+.faq-note {
+  margin: 1.35rem 0 0;
+  max-width: 68ch;
+  color: var(--muted);
+}
+@supports selector(::details-content) {
+  .faq-item::details-content {
+    height: 0;
+    overflow: clip;
+    transition: height 0.28s ease, content-visibility 0.28s ease allow-discrete;
+  }
+  .faq-item[open]::details-content {
+    height: auto;
+  }
 }
 
 /* Lakes index banner */
@@ -838,6 +906,7 @@ button.button:disabled {
 
 @media (prefers-reduced-motion: reduce) {
   .lake-card:hover { transform: none; }
+  .faq-item::details-content { transition: none; }
 }
 
 @media print {

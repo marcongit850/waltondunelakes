@@ -12,9 +12,23 @@ From the repository root:
 python3 -m http.server 8080
 ```
 
-Open `http://localhost:8080/`.
+Open `http://localhost:8080/`. That server only shows the static pages. Contact delivery is the Worker in `src/worker.js`. Check it with:
 
-Cloudflare Pages serves this directory as static assets (`wrangler.jsonc`, `assets.directory` set to `.`). The Wrangler project name is still `douglassemail` so an existing Pages project can keep deploying this folder.
+```bash
+node test/contact-function.test.mjs
+```
+
+## Deploy
+
+Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. The project name is still `douglassemail`.
+
+`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, and `images/`).
+
+This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to FormSubmit, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` is a single variable or secret. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through FormSubmit.
+
+The old Pages `functions/` folder and `_routes.json` are not used. Workers static assets ignore Pages Functions, which is why `/contact/` returned 200 while `/api/contact` returned 404. An assets-only Worker also cannot store variables (“Variables cannot be added to a Worker that only has static assets”), so `CONTACT_EMAIL` could not be saved until this script existed.
+
+`.assetsignore` keeps the Worker source, tests, Wrangler config, and this README out of the public upload. Visits to `/get-involved/`, `/impact/`, and `/membership/` still redirect to the home page. Those rules live in `_redirects`, which the asset router applies on ordinary page views. `src/worker.js` repeats them when a request reaches the Worker instead.
 
 ## Pages
 
@@ -23,7 +37,15 @@ Cloudflare Pages serves this directory as static assets (`wrangler.jsonc`, `asse
 - `/lakes/<slug>/` is one lake, for example `/lakes/western/`
 - `/contact/` is a short form for questions and corrections
 
-The contact form posts to the Pages Function at `/api/contact`. That function reads the destination inbox from the `CONTACT_EMAIL` environment variable and does not put the address in the pages sent to the browser. Set `CONTACT_EMAIL` in Cloudflare Pages → Settings → Environment variables for both Production and Preview. The first message through FormSubmit may require a confirmation click in that inbox.
+The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` only and does not put the address in the pages sent to the browser.
+
+After this change is merged and deployed, set the inbox in Cloudflare:
+
+1. Open **Workers & Pages** → **douglassemail** → **Settings** → **Variables and Secrets**.
+2. Add `CONTACT_EMAIL` = `352marc@gmail.com` for Production. Add it for Preview too if that environment is offered.
+3. Redeploy after saving the variable.
+
+Do not commit the address in `wrangler.jsonc`. The first message through FormSubmit still sends an activation email to that inbox; open it and confirm once. Until `CONTACT_EMAIL` is set, `POST /api/contact` returns a clear error (HTTP 503) instead of a static 404.
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 
