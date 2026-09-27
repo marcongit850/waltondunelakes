@@ -6,4 +6,7 @@
   "assets": {
     "directory": "."
   }
+  // Contact mail: set CONTACT_EMAIL in the Cloudflare Pages dashboard
+  // (Settings → Environment variables) for Production and Preview.
+  // Do not commit the address. functions/api/contact.js reads context.env.CONTACT_EMAIL.
 }
