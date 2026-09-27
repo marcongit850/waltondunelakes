@@ -142,6 +142,15 @@ p { text-wrap: pretty; }
 .menu-toggle::-webkit-details-marker { display: none; }
 .menu-toggle::marker { content: ""; }
 .nav { display: flex; align-items: center; gap: 1.4rem; }
+/* Desktop keeps the nav visible. Closed <details> hides its content in
+   current Chrome, which would drop these links when the menu button is hidden. */
+@media (min-width: 721px) {
+  .nav-disclosure::details-content {
+    display: block;
+    height: auto;
+    content-visibility: visible;
+  }
+}
 .nav a {
   color: var(--ink);
   text-decoration: none;
