@@ -4,6 +4,9 @@ import { handleContact } from "../src/contact.js";
 import worker, { LEGACY_REDIRECTS } from "../src/worker.js";
 
 const INBOX = "inbox@example.com";
+const API_KEY = "re_test_secret";
+const RESEND_URL = "https://api.resend.com/emails";
+const FROM = "Coastal Dune Lakes <onboarding@resend.dev>";
 let fetchCalls = [];
 const realFetch = globalThis.fetch;
 
@@ -19,7 +22,12 @@ function restoreFetch() {
   globalThis.fetch = realFetch;
 }
 
-async function post(body, { ip = "203.0.113.10", env = { CONTACT_EMAIL: INBOX }, raw, headers } = {}) {
+async function post(body, {
+  ip = "203.0.113.10",
+  env = { CONTACT_EMAIL: INBOX, RESEND_API_KEY: API_KEY },
+  raw,
+  headers,
+} = {}) {
   const payload = raw === undefined ? JSON.stringify(body) : raw;
   const request = new Request("https://douglassemail.com/api/contact", {
     method: "POST",
@@ -113,76 +121,129 @@ await check("does not send when CONTACT_EMAIL is missing", async () => {
   restoreFetch();
 });
 
-await check("posts to FormSubmit using only the env inbox", async () => {
-  installFetch(async () => new Response(JSON.stringify({ success: "true" }), { status: 200 }));
-  const { response, json, text } = await post(valid, { ip: "203.0.113.28" });
-  assert.equal(response.status, 200);
-  assert.deepEqual(json, { ok: true });
-  assert.equal(fetchCalls.length, 1);
-  assert.equal(fetchCalls[0].url, `https://formsubmit.co/ajax/${encodeURIComponent(INBOX)}`);
-  const sentHeaders = new Headers(fetchCalls[0].init.headers);
-  assert.equal(sentHeaders.get("origin"), "https://douglassemail.com");
-  assert.equal(sentHeaders.get("referer"), "https://douglassemail.com/contact/");
-  const sent = JSON.parse(fetchCalls[0].init.body);
-  assert.equal(sent.email, valid.email);
-  assert.equal(sent._replyto, valid.email);
-  assert.equal(sent._subject, valid.subject);
-  assert.equal(sent._url, "https://douglassemail.com/contact/");
-  assert.equal(text.includes(INBOX), false);
+await check("does not send when RESEND_API_KEY is missing", async () => {
+  installFetch(async () => {
+    throw new Error("fetch should not run");
+  });
+  const missing = await post(valid, {
+    ip: "203.0.113.81",
+    env: { CONTACT_EMAIL: INBOX },
+  });
+  assert.equal(missing.response.status, 503);
+  assert.equal(missing.json.ok, false);
+  assert.equal(fetchCalls.length, 0);
+  assert.equal(missing.text.includes(INBOX), false);
+  const blank = await post(valid, {
+    ip: "203.0.113.82",
+    env: { CONTACT_EMAIL: INBOX, RESEND_API_KEY: "  " },
+  });
+  assert.equal(blank.response.status, 503);
+  assert.equal(fetchCalls.length, 0);
+  assert.equal(blank.text.includes(INBOX), false);
   restoreFetch();
 });
 
-await check("sends the site Origin, keeps a same-site Referer, and drops a foreign one", async () => {
-  installFetch(async () => new Response(JSON.stringify({ success: true }), { status: 200 }));
-  await post(valid, {
-    ip: "203.0.113.70",
-    headers: {
-      origin: "https://douglassemail.com",
-      referer: "https://douglassemail.com/contact/?from=map",
-    },
-  });
-  const forwarded = new Headers(fetchCalls[0].init.headers);
-  assert.equal(forwarded.get("origin"), "https://douglassemail.com");
-  assert.equal(forwarded.get("referer"), "https://douglassemail.com/contact/?from=map");
-  assert.equal(JSON.parse(fetchCalls[0].init.body)._url, "https://douglassemail.com/contact/");
-
-  await post(valid, {
-    ip: "203.0.113.71",
+await check("posts to Resend using the env inbox and visitor reply-to", async () => {
+  installFetch(async () => new Response(JSON.stringify({ id: "email_123" }), { status: 200 }));
+  const { response, json, text } = await post(valid, {
+    ip: "203.0.113.28",
     headers: {
       origin: "https://evil.example",
       referer: "https://evil.example/phish",
     },
   });
-  const replaced = new Headers(fetchCalls[1].init.headers);
-  assert.equal(replaced.get("origin"), "https://douglassemail.com");
-  assert.equal(replaced.get("referer"), "https://douglassemail.com/contact/");
-  assert.equal(JSON.parse(fetchCalls[1].init.body)._url, "https://douglassemail.com/contact/");
+  assert.equal(response.status, 200);
+  assert.deepEqual(json, { ok: true });
+  assert.equal(fetchCalls.length, 1);
+  assert.equal(fetchCalls[0].url, RESEND_URL);
+  assert.equal(fetchCalls[0].init.method, "POST");
+  const sentHeaders = new Headers(fetchCalls[0].init.headers);
+  assert.equal(sentHeaders.get("authorization"), `Bearer ${API_KEY}`);
+  assert.equal(sentHeaders.get("content-type"), "application/json");
+  assert.equal(sentHeaders.get("origin"), null);
+  assert.equal(sentHeaders.get("referer"), null);
+  const sent = JSON.parse(fetchCalls[0].init.body);
+  assert.equal(sent.from, FROM);
+  assert.deepEqual(sent.to, [INBOX]);
+  assert.equal(sent.reply_to, valid.email);
+  assert.equal(sent.subject, valid.subject);
+  assert.match(sent.text, new RegExp(`Name: ${valid.name}`));
+  assert.match(sent.text, new RegExp(`Email: ${valid.email}`));
+  assert.match(sent.text, new RegExp(`Subject: ${valid.subject}`));
+  assert.match(sent.text, /A short correction about the outfall\./);
+  assert.equal(sent._url, undefined);
+  assert.equal(sent._replyto, undefined);
+  assert.equal(sent._subject, undefined);
+  assert.equal(text.includes(INBOX), false);
+  assert.equal(text.includes(API_KEY), false);
+
+  const untitled = await post({ ...valid, subject: "  " }, { ip: "203.0.113.83" });
+  assert.equal(untitled.response.status, 200);
+  const fallback = JSON.parse(fetchCalls[1].init.body);
+  assert.equal(fallback.subject, `Coastal Dune Lakes note from ${valid.name}`);
+  assert.doesNotMatch(fallback.text, /^Subject:/m);
   restoreFetch();
 });
 
-await check("hides upstream failures and says when activation is needed", async () => {
+await check("maps Resend rate limits and client errors without leaking secrets", async () => {
   installFetch(async () =>
-    new Response(JSON.stringify({ success: false, message: `Activate ${INBOX} to continue` }), {
-      status: 200,
-    }),
+    new Response(
+      JSON.stringify({
+        statusCode: 429,
+        name: "rate_limit_exceeded",
+        message: `Too many requests for ${INBOX} using ${API_KEY}`,
+      }),
+      { status: 429 },
+    ),
   );
-  const activation = await post(valid, { ip: "203.0.113.29" });
-  assert.equal(activation.response.status, 503);
-  assert.equal(activation.text.includes(INBOX), false);
-  assert.match(activation.json.error, /one-time activation/i);
-  assert.doesNotMatch(activation.json.error, /Activate Form/i);
+  const limited = await post(valid, { ip: "203.0.113.29" });
+  assert.equal(limited.response.status, 429);
+  assert.match(limited.json.error, /wait a minute/i);
+  assert.equal(limited.text.includes(INBOX), false);
+  assert.equal(limited.text.includes(API_KEY), false);
 
   installFetch(async () =>
     new Response(
       JSON.stringify({
-        success: "false",
-        message:
-          "This form needs Activation. We've sent you an email containing an 'Activate Form' link. Just click it and your form will be actived!",
+        statusCode: 429,
+        name: "daily_quota_exceeded",
+        message: `Daily quota exceeded for ${INBOX}`,
       }),
-      { status: 200 },
+      { status: 429 },
     ),
   );
-  const htmlActivation = await post(valid, {
+  const quota = await post(valid, { ip: "203.0.113.84" });
+  assert.equal(quota.response.status, 429);
+  assert.match(quota.json.error, /try again later/i);
+  assert.equal(quota.text.includes(INBOX), false);
+
+  installFetch(async () =>
+    new Response(
+      JSON.stringify({
+        statusCode: 422,
+        name: "validation_error",
+        message: `Invalid \`to\` field ${INBOX}`,
+      }),
+      { status: 422 },
+    ),
+  );
+  const invalid = await post(valid, { ip: "203.0.113.85" });
+  assert.equal(invalid.response.status, 400);
+  assert.match(invalid.json.error, /check the form/i);
+  assert.equal(invalid.text.includes(INBOX), false);
+  assert.equal(invalid.text.includes(API_KEY), false);
+
+  installFetch(async () =>
+    new Response(
+      JSON.stringify({
+        statusCode: 403,
+        name: "validation_error",
+        message: `You can only send testing emails to your own email address (${INBOX}).`,
+      }),
+      { status: 403 },
+    ),
+  );
+  const restricted = await post(valid, {
     ip: "203.0.113.72",
     raw: new URLSearchParams({
       name: valid.name,
@@ -195,22 +256,33 @@ await check("hides upstream failures and says when activation is needed", async 
       accept: "text/html",
     },
   });
-  assert.equal(htmlActivation.response.status, 503);
-  assert.match(htmlActivation.response.headers.get("content-type"), /text\/html/);
-  assert.match(htmlActivation.text, /one-time activation/i);
-  assert.equal(htmlActivation.text.includes(INBOX), false);
-  assert.equal(htmlActivation.text.includes("Activate Form"), false);
+  assert.equal(restricted.response.status, 503);
+  assert.match(restricted.response.headers.get("content-type"), /text\/html/);
+  assert.match(restricted.text, /not available right now/i);
+  assert.equal(restricted.text.includes(INBOX), false);
+  assert.equal(restricted.text.includes(API_KEY), false);
+  assert.equal(restricted.text.includes("testing emails"), false);
 
   installFetch(async () => new Response("nope", { status: 500 }));
   const failed = await post(valid, { ip: "203.0.113.30" });
   assert.equal(failed.response.status, 502);
   assert.equal(failed.json.ok, false);
   assert.equal(failed.text.includes("nope"), false);
+  assert.equal(failed.text.includes(INBOX), false);
+
+  installFetch(async () => {
+    throw new Error(`network down ${INBOX} ${API_KEY}`);
+  });
+  const offline = await post(valid, { ip: "203.0.113.86" });
+  assert.equal(offline.response.status, 502);
+  assert.match(offline.json.error, /try again/i);
+  assert.equal(offline.text.includes(INBOX), false);
+  assert.equal(offline.text.includes(API_KEY), false);
   restoreFetch();
 });
 
 await check("returns an HTML page for a normal form post", async () => {
-  installFetch(async () => new Response(JSON.stringify({ success: "true" }), { status: 200 }));
+  installFetch(async () => new Response(JSON.stringify({ id: "email_html" }), { status: 200 }));
   const body = new URLSearchParams({
     name: "Ada Lovelace",
     email: "ada@example.com",
@@ -227,7 +299,7 @@ await check("returns an HTML page for a normal form post", async () => {
     },
     body,
   });
-  const response = await handleContact(request, { CONTACT_EMAIL: INBOX });
+  const response = await handleContact(request, { CONTACT_EMAIL: INBOX, RESEND_API_KEY: API_KEY });
   const text = await response.text();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type"), /text\/html/);
@@ -244,7 +316,7 @@ await check("rejects non-POST and rate-limits a busy address", async () => {
   );
   assert.equal(get.status, 405);
 
-  installFetch(async () => new Response(JSON.stringify({ success: true }), { status: 200 }));
+  installFetch(async () => new Response(JSON.stringify({ id: "email_rate" }), { status: 200 }));
   const ip = "203.0.113.40";
   for (let i = 0; i < 5; i += 1) {
     const result = await post(valid, { ip });
@@ -259,6 +331,7 @@ await check("routes contact through the Worker and other URLs through ASSETS", a
   const seen = [];
   const env = {
     CONTACT_EMAIL: INBOX,
+    RESEND_API_KEY: API_KEY,
     ASSETS: {
       fetch(request) {
         seen.push(new URL(request.url).pathname);
@@ -297,7 +370,7 @@ await check("routes contact through the Worker and other URLs through ASSETS", a
   assert.match(missingNameBody.error, /name/i);
   assert.equal(seen.length, 5);
 
-  installFetch(async () => new Response(JSON.stringify({ success: "true" }), { status: 200 }));
+  installFetch(async () => new Response(JSON.stringify({ id: "email_worker" }), { status: 200 }));
   const sent = await worker.fetch(
     new Request("https://douglassemail.com/api/contact", {
       method: "POST",
@@ -312,7 +385,11 @@ await check("routes contact through the Worker and other URLs through ASSETS", a
   );
   assert.equal(sent.status, 200);
   assert.deepEqual(await sent.json(), { ok: true });
-  assert.equal(fetchCalls[0].url, `https://formsubmit.co/ajax/${encodeURIComponent(INBOX)}`);
+  assert.equal(fetchCalls[0].url, RESEND_URL);
+  const sentBody = JSON.parse(fetchCalls[0].init.body);
+  assert.deepEqual(sentBody.to, [INBOX]);
+  assert.equal(sentBody.reply_to, valid.email);
+  assert.equal(new Headers(fetchCalls[0].init.headers).get("authorization"), `Bearer ${API_KEY}`);
   assert.equal(seen.length, 5);
   restoreFetch();
 });
@@ -361,7 +438,11 @@ await check("does not bake the inbox into the Worker or Wrangler config", async 
   assert.doesNotMatch(wrangler, /"vars"\s*:/);
   for (const source of [wrangler, contactSource, workerSource]) {
     assert.equal(source.includes("352marc@gmail.com"), false);
+    assert.equal(source.includes("re_"), false);
+    assert.equal(/formsubmit/i.test(source), false);
   }
+  assert.match(contactSource, /https:\/\/api\.resend\.com\/emails/);
+  assert.match(contactSource, /onboarding@resend\.dev/);
   assert.match(ignore, /^\/src$/m);
   assert.match(ignore, /^\/test$/m);
   assert.match(ignore, /^\/wrangler\.jsonc$/m);

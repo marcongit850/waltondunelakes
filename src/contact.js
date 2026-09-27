@@ -1,10 +1,18 @@
 // POST /api/contact
 // The destination inbox is CONTACT_EMAIL, a Worker variable or secret.
-// This module delivers through FormSubmit and never returns that address.
+// Delivery uses the Resend HTTP API with RESEND_API_KEY. Neither value is
+// returned to the browser.
+//
+// FROM is Resend's free onboarding sender, which works without a verified
+// domain. It can deliver only to the Resend account's own address until a
+// domain is verified. After that, switch FROM to an address on the verified
+// domain (for example "Coastal Dune Lakes <hello@douglassemail.com>").
 
 const MAX_BODY = 12000;
 const WINDOW_MS = 60 * 1000;
 const MAX_PER_WINDOW = 5;
+const RESEND_URL = "https://api.resend.com/emails";
+const FROM = "Coastal Dune Lakes <onboarding@resend.dev>";
 const recentHits = new Map();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -83,27 +91,57 @@ function singleLine(value) {
   return String(value ?? "").replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
-// FormSubmit treats a fetch with no web Referer as a file:// page
-// ("open this page through a web server"). Origin alone and the _url field
-// alone still get that rejection. A same-site Referer moves the response to
-// activation or delivery. Keep the inbox out of the page by sending these
-// from the Worker, using the public request origin rather than a foreign header.
-function formSubmitSource(request) {
-  const origin = new URL(request.url).origin;
-  const formUrl = new URL("/contact/", origin).href;
+function resendApiKey(env) {
+  const key = typeof env.RESEND_API_KEY === "string" ? env.RESEND_API_KEY.trim() : "";
+  if (!key || /\s/.test(key)) return "";
+  return key;
+}
 
-  let referer = formUrl;
-  const incomingReferer = request.headers.get("referer");
-  if (incomingReferer) {
-    try {
-      const parsed = new URL(incomingReferer);
-      if (parsed.origin === origin) referer = parsed.href;
-    } catch {
-      // Ignore a malformed Referer and use the contact page.
-    }
+function contactText(name, email, subject, message) {
+  const lines = [`Name: ${name}`, `Email: ${email}`];
+  if (subject) lines.push(`Subject: ${subject}`);
+  lines.push("", message);
+  return lines.join("\n");
+}
+
+// Map a Resend failure to a short visitor message. Never copy Resend's
+// message: it can include the inbox address or other account detail.
+function resendFailure(status, result) {
+  const name = result && typeof result.name === "string" ? result.name : "";
+  const quota = name === "daily_quota_exceeded" || name === "monthly_quota_exceeded";
+  const rateLimitedByResend = status === 429 || name === "rate_limit_exceeded" || quota;
+
+  if (rateLimitedByResend) {
+    return {
+      status: 429,
+      error: quota ? "Please try again later." : "Please wait a minute and try again.",
+    };
   }
 
-  return { origin, referer, formUrl };
+  if (
+    status === 401 ||
+    status === 403 ||
+    name === "missing_api_key" ||
+    name === "restricted_api_key" ||
+    name === "suspended_api_key"
+  ) {
+    return { status: 503, error: "The contact form is not available right now." };
+  }
+
+  if (
+    status === 400 ||
+    status === 422 ||
+    name === "validation_error" ||
+    name === "invalid_parameter" ||
+    name === "missing_required_field"
+  ) {
+    return {
+      status: 400,
+      error: "Could not send that message. Please check the form and try again.",
+    };
+  }
+
+  return { status: 502, error: "Could not send that message. Please try again." };
 }
 
 export async function handleContact(request, env = {}) {
@@ -178,27 +216,28 @@ export async function handleContact(request, env = {}) {
     return reply({ ok: false, error: "The contact form is not available right now." }, 503);
   }
 
-  const source = formSubmitSource(request);
+  const apiKey = resendApiKey(env);
+  if (!apiKey) {
+    return reply({ ok: false, error: "The contact form is not available right now." }, 503);
+  }
+
+  const subjectLine = subject || `Coastal Dune Lakes note from ${name}`;
   const payload = {
-    name,
-    email,
-    message,
-    _replyto: email,
-    _subject: subject || `Coastal Dune Lakes note from ${name}`,
-    _template: "table",
-    _captcha: "false",
-    _url: source.formUrl,
+    from: FROM,
+    to: [to],
+    reply_to: email,
+    subject: subjectLine,
+    text: contactText(name, email, subject, message),
   };
 
   let upstream;
   try {
-    upstream = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
+    upstream = await fetch(RESEND_URL, {
       method: "POST",
       headers: {
+        authorization: `Bearer ${apiKey}`,
         "content-type": "application/json",
         accept: "application/json",
-        origin: source.origin,
-        referer: source.referer,
       },
       body: JSON.stringify(payload),
     });
@@ -213,20 +252,11 @@ export async function handleContact(request, env = {}) {
     result = null;
   }
 
-  const upstreamMessage = result && typeof result.message === "string" ? result.message : "";
-  if (/activat/i.test(upstreamMessage)) {
-    return reply(
-      {
-        ok: false,
-        error: "The contact form needs a one-time activation. Please try again later.",
-      },
-      503,
-    );
-  }
-
-  const delivered = upstream.ok && result && (result.success === true || result.success === "true");
+  const delivered =
+    upstream.ok && result && typeof result.id === "string" && result.id.trim().length > 0;
   if (!delivered) {
-    return reply({ ok: false, error: "Could not send that message. Please try again." }, 502);
+    const failure = resendFailure(upstream.status, result);
+    return reply({ ok: false, error: failure.error }, failure.status);
   }
 
   return reply({ ok: true }, 200);
