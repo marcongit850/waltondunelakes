@@ -49,6 +49,6 @@ Do not commit the address in `wrangler.jsonc`. The Worker posts to FormSubmit's 
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 
-Shared files are `styles.css` and `site.js` (menu, map highlighting, and the contact form). Photographs live in `images/`. `CREDITS.md` lists which pictures are a named lake, including the public-domain U.S. Geological Survey aerials in `images/lakes/`.
+Shared files are `styles.css`, `site.js` (menu, map highlighting, and the contact form), and `footer.js` (the site footer). Edit `footer.js` to change footer navigation and the Resources links on every page that has a footer. The script fills in relative Home, Lakes, and Contact hrefs from the page depth. Redirect pages do not load it. Photographs live in `images/`. `CREDITS.md` lists which pictures are a named lake, including the public-domain U.S. Geological Survey aerials in `images/lakes/`.
 
-Acreages are approximate and vary by source. Photo credits stay beside the pictures and in `CREDITS.md`. The footer notes that the site is an independent educational resource, lists partners, and links to the contact page.
+Acreages are approximate and vary by source. Photo credits stay beside the pictures and in `CREDITS.md`. The footer notes that the site is an independent educational resource, lists Resources, and links to the contact page.
