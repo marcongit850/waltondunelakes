@@ -45,7 +45,7 @@ After this change is merged and deployed, set the inbox in Cloudflare:
 2. Add `CONTACT_EMAIL` = `352marc@gmail.com` for Production. Add it for Preview too if that environment is offered.
 3. Redeploy after saving the variable.
 
-Do not commit the address in `wrangler.jsonc`. The first message through FormSubmit still sends an activation email to that inbox; open it and confirm once. Until `CONTACT_EMAIL` is set, `POST /api/contact` returns a clear error (HTTP 503) instead of a static 404.
+Do not commit the address in `wrangler.jsonc`. The Worker posts to FormSubmit's AJAX endpoint with this site's `Origin`, a `Referer` for the contact page, and FormSubmit's `_url` field. A server fetch without that web `Referer` is rejected as if the page were opened as an HTML file. The first accepted message still sends an activation email to the inbox; open it and confirm once. Until that link is confirmed, `POST /api/contact` returns HTTP 503 and says the form needs a one-time activation. Until `CONTACT_EMAIL` is set, it returns a different HTTP 503 instead of a static 404.
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 

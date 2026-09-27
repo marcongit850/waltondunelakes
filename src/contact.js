@@ -83,6 +83,29 @@ function singleLine(value) {
   return String(value ?? "").replace(/[\r\n\t]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
+// FormSubmit treats a fetch with no web Referer as a file:// page
+// ("open this page through a web server"). Origin alone and the _url field
+// alone still get that rejection. A same-site Referer moves the response to
+// activation or delivery. Keep the inbox out of the page by sending these
+// from the Worker, using the public request origin rather than a foreign header.
+function formSubmitSource(request) {
+  const origin = new URL(request.url).origin;
+  const formUrl = new URL("/contact/", origin).href;
+
+  let referer = formUrl;
+  const incomingReferer = request.headers.get("referer");
+  if (incomingReferer) {
+    try {
+      const parsed = new URL(incomingReferer);
+      if (parsed.origin === origin) referer = parsed.href;
+    } catch {
+      // Ignore a malformed Referer and use the contact page.
+    }
+  }
+
+  return { origin, referer, formUrl };
+}
+
 export async function handleContact(request, env = {}) {
   const accept = (request.headers.get("accept") || "").toLowerCase();
   const type = (request.headers.get("content-type") || "").toLowerCase();
@@ -155,6 +178,7 @@ export async function handleContact(request, env = {}) {
     return reply({ ok: false, error: "The contact form is not available right now." }, 503);
   }
 
+  const source = formSubmitSource(request);
   const payload = {
     name,
     email,
@@ -163,6 +187,7 @@ export async function handleContact(request, env = {}) {
     _subject: subject || `Coastal Dune Lakes note from ${name}`,
     _template: "table",
     _captcha: "false",
+    _url: source.formUrl,
   };
 
   let upstream;
@@ -172,6 +197,8 @@ export async function handleContact(request, env = {}) {
       headers: {
         "content-type": "application/json",
         accept: "application/json",
+        origin: source.origin,
+        referer: source.referer,
       },
       body: JSON.stringify(payload),
     });
@@ -189,7 +216,10 @@ export async function handleContact(request, env = {}) {
   const upstreamMessage = result && typeof result.message === "string" ? result.message : "";
   if (/activat/i.test(upstreamMessage)) {
     return reply(
-      { ok: false, error: "The contact form is finishing a one-time setup. Please try again later." },
+      {
+        ok: false,
+        error: "The contact form needs a one-time activation. Please try again later.",
+      },
       503,
     );
   }
