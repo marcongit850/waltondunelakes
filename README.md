@@ -1,6 +1,6 @@
 # Coastal Dune Lakes of Walton County
 
-A static reference and education site about the coastal dune lakes of Walton County, Florida. The home page introduces the lakes, a west-to-east guide map, and photo cards for all 15 named lakes. Each lake has its own page.
+A static reference and education site about the coastal dune lakes of Walton County, Florida. The home page introduces the lakes, an illustrated west-to-east map, and photo cards for all 15 named lakes. Each lake has its own page.
 
 The older Friends of Scenic 30A sandbox pages are gone. Visits to `/get-involved/`, `/impact/`, and `/membership/` redirect to the home page.
 
