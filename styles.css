@@ -572,6 +572,32 @@ p { text-wrap: pretty; }
   margin-top: 2.4rem;
 }
 .gallery h2 { margin: 0 0 0.85rem; }
+.lake-video {
+  margin-top: 2.4rem;
+}
+.lake-video h2 { margin: 0 0 0.85rem; }
+.lake-video figure { margin: 0; }
+.video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--gulf-deep);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.lake-video figcaption {
+  margin-top: 0.55rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
 .gallery-grid {
   list-style: none;
   margin: 0;
