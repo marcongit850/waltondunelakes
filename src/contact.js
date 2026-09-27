@@ -38,7 +38,7 @@ function json(body, status) {
 function html(body, status) {
   const heading = body.ok ? "Message sent" : "Message not sent";
   const text = body.ok
-    ? "Thank you. Your note is on its way."
+    ? "Thank you. Your message is on its way."
     : body.error || "Could not send that message. Please try again.";
   const page = `<!DOCTYPE html>
 <html lang="en">
