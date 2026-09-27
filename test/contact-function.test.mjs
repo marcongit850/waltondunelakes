@@ -120,15 +120,47 @@ await check("posts to FormSubmit using only the env inbox", async () => {
   assert.deepEqual(json, { ok: true });
   assert.equal(fetchCalls.length, 1);
   assert.equal(fetchCalls[0].url, `https://formsubmit.co/ajax/${encodeURIComponent(INBOX)}`);
+  const sentHeaders = new Headers(fetchCalls[0].init.headers);
+  assert.equal(sentHeaders.get("origin"), "https://douglassemail.com");
+  assert.equal(sentHeaders.get("referer"), "https://douglassemail.com/contact/");
   const sent = JSON.parse(fetchCalls[0].init.body);
   assert.equal(sent.email, valid.email);
   assert.equal(sent._replyto, valid.email);
   assert.equal(sent._subject, valid.subject);
+  assert.equal(sent._url, "https://douglassemail.com/contact/");
   assert.equal(text.includes(INBOX), false);
   restoreFetch();
 });
 
-await check("hides upstream failures and activation details", async () => {
+await check("sends the site Origin, keeps a same-site Referer, and drops a foreign one", async () => {
+  installFetch(async () => new Response(JSON.stringify({ success: true }), { status: 200 }));
+  await post(valid, {
+    ip: "203.0.113.70",
+    headers: {
+      origin: "https://douglassemail.com",
+      referer: "https://douglassemail.com/contact/?from=map",
+    },
+  });
+  const forwarded = new Headers(fetchCalls[0].init.headers);
+  assert.equal(forwarded.get("origin"), "https://douglassemail.com");
+  assert.equal(forwarded.get("referer"), "https://douglassemail.com/contact/?from=map");
+  assert.equal(JSON.parse(fetchCalls[0].init.body)._url, "https://douglassemail.com/contact/");
+
+  await post(valid, {
+    ip: "203.0.113.71",
+    headers: {
+      origin: "https://evil.example",
+      referer: "https://evil.example/phish",
+    },
+  });
+  const replaced = new Headers(fetchCalls[1].init.headers);
+  assert.equal(replaced.get("origin"), "https://douglassemail.com");
+  assert.equal(replaced.get("referer"), "https://douglassemail.com/contact/");
+  assert.equal(JSON.parse(fetchCalls[1].init.body)._url, "https://douglassemail.com/contact/");
+  restoreFetch();
+});
+
+await check("hides upstream failures and says when activation is needed", async () => {
   installFetch(async () =>
     new Response(JSON.stringify({ success: false, message: `Activate ${INBOX} to continue` }), {
       status: 200,
@@ -137,7 +169,37 @@ await check("hides upstream failures and activation details", async () => {
   const activation = await post(valid, { ip: "203.0.113.29" });
   assert.equal(activation.response.status, 503);
   assert.equal(activation.text.includes(INBOX), false);
-  assert.match(activation.json.error, /one-time setup/i);
+  assert.match(activation.json.error, /one-time activation/i);
+  assert.doesNotMatch(activation.json.error, /Activate Form/i);
+
+  installFetch(async () =>
+    new Response(
+      JSON.stringify({
+        success: "false",
+        message:
+          "This form needs Activation. We've sent you an email containing an 'Activate Form' link. Just click it and your form will be actived!",
+      }),
+      { status: 200 },
+    ),
+  );
+  const htmlActivation = await post(valid, {
+    ip: "203.0.113.72",
+    raw: new URLSearchParams({
+      name: valid.name,
+      email: valid.email,
+      subject: valid.subject,
+      message: valid.message,
+    }).toString(),
+    headers: {
+      "content-type": "application/x-www-form-urlencoded",
+      accept: "text/html",
+    },
+  });
+  assert.equal(htmlActivation.response.status, 503);
+  assert.match(htmlActivation.response.headers.get("content-type"), /text\/html/);
+  assert.match(htmlActivation.text, /one-time activation/i);
+  assert.equal(htmlActivation.text.includes(INBOX), false);
+  assert.equal(htmlActivation.text.includes("Activate Form"), false);
 
   installFetch(async () => new Response("nope", { status: 500 }));
   const failed = await post(valid, { ip: "203.0.113.30" });
