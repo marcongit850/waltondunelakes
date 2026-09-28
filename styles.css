@@ -58,7 +58,7 @@ a:hover { color: var(--gulf-deep); }
 
 #explore,
 #about,
-.section { scroll-margin-top: 11rem; }
+.section { scroll-margin-top: 6.5rem; }
 
 .wrap {
   width: min(var(--wrap), calc(100% - 2rem));
@@ -118,20 +118,20 @@ p { text-wrap: pretty; }
   display: block;
   width: auto;
   height: auto;
-  max-height: 7.5rem;
-  max-width: min(16.5rem, 70vw);
+  max-height: 3.75rem;
+  max-width: min(8.25rem, 35vw);
 }
 .brand:hover .brand-logo { opacity: 0.9; }
 @media (min-width: 721px) {
   .brand-logo {
-    max-height: 8rem;
-    max-width: 16rem;
+    max-height: 4rem;
+    max-width: 8rem;
   }
 }
 @media (min-width: 960px) {
   .brand-logo {
-    max-height: 9.25rem;
-    max-width: 18rem;
+    max-height: 4.625rem;
+    max-width: 9rem;
   }
 }
 .nav-disclosure { position: relative; }
@@ -497,7 +497,7 @@ p { text-wrap: pretty; }
 .story-photo {
   margin: 0.4rem 0 0;
   position: sticky;
-  top: 10.75rem;
+  top: 6.5rem;
 }
 .story-photo img,
 .bleed-photo img {
