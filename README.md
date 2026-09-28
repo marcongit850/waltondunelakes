@@ -1,6 +1,6 @@
 # Coastal Dune Lakes of Walton County
 
-A static reference and education site about the coastal dune lakes of Walton County, Florida, published at [https://waltondunelakes.com/](https://waltondunelakes.com/). The GitHub repository is `waltondunelakes`. The Cloudflare Worker name stays `douglassemail` so the existing Workers Builds project and custom domains keep deploying this site. The home page introduces the lakes, an illustrated west-to-east map, and photo cards for all 15 named lakes. Each lake has its own page.
+A static reference and education site about the coastal dune lakes of Walton County, Florida, published at [https://waltondunelakes.com/](https://waltondunelakes.com/). The GitHub repository is `waltondunelakes`. The Cloudflare Worker name is `waltondunelakes`. The home page introduces the lakes, an illustrated west-to-east map, and photo cards for all 15 named lakes. Each lake has its own page.
 
 The older Friends of Scenic 30A sandbox pages are gone. Visits to `/get-involved/`, `/impact/`, and `/membership/` redirect to the home page.
 
@@ -20,7 +20,7 @@ npm test
 
 ## Deploy
 
-Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. Leave `"name": "douglassemail"` unchanged. That Worker name is what the existing Workers Builds project and custom domains (including https://waltondunelakes.com/) are wired to. Changing it would deploy a new Worker and take the live site offline until Cloudflare is rewired. The GitHub repository name is `waltondunelakes`.
+Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. `"name"` is `waltondunelakes`. That Worker serves the public domain https://waltondunelakes.com/. The GitHub repository name is `waltondunelakes`. The previous `douglassemail` Worker no longer serves this site.
 
 `main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
@@ -43,7 +43,7 @@ The From address is Resend's free onboarding sender, `Coastal Dune Lakes <onboar
 
 After this change is merged and deployed, set the Worker values in Cloudflare:
 
-1. Open **Workers & Pages** → **douglassemail** (the Worker project name; the public site is https://waltondunelakes.com/) → **Settings** → **Variables and Secrets**.
+1. Open **Workers & Pages** → **waltondunelakes** → **Settings** → **Variables and Secrets**.
 2. Keep `CONTACT_EMAIL` = `352marc@gmail.com` for Production. Add it for Preview too if that environment is offered.
 3. Add `RESEND_API_KEY` as a secret (or encrypted variable). Use the key from [Resend API keys](https://resend.com/api-keys), without a `Bearer` prefix. Add it for Preview too if that environment is offered.
 4. Redeploy after saving so the Worker picks up the secret.
