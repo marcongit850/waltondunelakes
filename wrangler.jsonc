@@ -1,6 +1,7 @@
 {
-  // Cloudflare Worker plus static assets. The name stays douglassemail so the
-  // existing Workers Builds project keeps deploying this repository.
+  // Cloudflare Worker plus static assets. The Worker name stays douglassemail
+  // for the existing Workers Builds project and custom domains. The GitHub
+  // repo and public domain are waltondunelakes (https://waltondunelakes.com/).
   // An assets-only Worker has no script, so Cloudflare refuses variables
   // ("Variables cannot be added to a Worker that only has static assets").
   // "main" is what makes CONTACT_EMAIL and RESEND_API_KEY possible.
