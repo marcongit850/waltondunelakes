@@ -6,7 +6,7 @@
 // FROM is Resend's free onboarding sender, which works without a verified
 // domain. It can deliver only to the Resend account's own address until a
 // domain is verified. After that, switch FROM to an address on the verified
-// domain (for example "Coastal Dune Lakes <hello@douglassemail.com>").
+// domain (for example "Coastal Dune Lakes <hello@waltondunelakes.com>").
 
 const MAX_BODY = 12000;
 const WINDOW_MS = 60 * 1000;
