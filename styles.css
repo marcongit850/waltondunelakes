@@ -173,6 +173,7 @@ p { text-wrap: pretty; }
   isolation: isolate;
 }
 .hero-photo img,
+.hero-photo video,
 .lake-hero img,
 .banner img {
   position: absolute;
@@ -180,6 +181,9 @@ p { text-wrap: pretty; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.hero-photo video {
+  pointer-events: none;
 }
 .hero-photo::after,
 .lake-hero::after,
@@ -189,6 +193,12 @@ p { text-wrap: pretty; }
   inset: 0;
   background:
     linear-gradient(to top, rgba(6, 20, 26, 0.82) 0%, rgba(6, 20, 26, 0.28) 48%, rgba(6, 20, 26, 0.18) 100%);
+}
+/* Aerial footage is brighter than the beach still, so the home hero overlay
+   stays a little darker through the headline. Lake and banner heroes are unchanged. */
+.hero-photo::after {
+  background:
+    linear-gradient(to top, rgba(6, 20, 26, 0.86) 0%, rgba(6, 20, 26, 0.5) 42%, rgba(6, 20, 26, 0.32) 100%);
 }
 .hero-copy,
 .lake-hero-copy,
@@ -907,6 +917,7 @@ button.button:disabled {
 @media (prefers-reduced-motion: reduce) {
   .lake-card:hover { transform: none; }
   .faq-item::details-content { transition: none; }
+  .hero-photo video { display: none; }
 }
 
 @media print {
@@ -915,4 +926,5 @@ button.button:disabled {
   .nav { display: flex !important; }
   .hero-photo, .lake-hero, .banner { min-height: 0; color: black; }
   .hero-photo::after, .lake-hero::after, .banner::after { display: none; }
+  .hero-photo video { display: none; }
 }
