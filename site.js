@@ -135,4 +135,98 @@
       });
     });
   }
+
+  var gallery = document.querySelector(".statement-gallery");
+  if (gallery) initStatementGallery(gallery);
 })();
+
+function initStatementGallery(root) {
+  var frame = root.querySelector("img");
+  var prev = root.querySelector(".statement-gallery-prev");
+  var next = root.querySelector(".statement-gallery-next");
+  var status = root.querySelector(".statement-gallery-status");
+  var manifest = root.getAttribute("data-gallery");
+  if (!frame || !manifest) return;
+
+  fetch(manifest).then(function (response) {
+    if (!response.ok) throw new Error("gallery");
+    return response.json();
+  }).then(function (list) {
+    var photos = statementGalleryPhotos(list, manifest);
+    if (!photos.length) return;
+    var index = 0;
+
+    function show(nextIndex) {
+      index = (nextIndex + photos.length) % photos.length;
+      var photo = photos[index];
+      if (frame.getAttribute("src") !== photo.src) frame.src = photo.src;
+      frame.alt = photo.alt;
+      frame.style.objectPosition = photo.position || "center";
+      var many = photos.length > 1;
+      if (prev) prev.hidden = !many;
+      if (next) next.hidden = !many;
+      if (status) status.textContent = many ? "Photo " + (index + 1) + " of " + photos.length : "";
+      if (many) {
+        root.setAttribute("role", "region");
+        root.setAttribute("aria-roledescription", "carousel");
+        root.setAttribute("aria-label", "Coastal dune lake photos");
+        root.tabIndex = 0;
+      }
+    }
+
+    show(0);
+    if (photos.length < 2 || !prev || !next) return;
+
+    prev.addEventListener("click", function () { show(index - 1); });
+    next.addEventListener("click", function () { show(index + 1); });
+    root.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        show(index - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        show(index + 1);
+      }
+    });
+
+    var startX = null;
+    root.addEventListener("touchstart", function (event) {
+      if (event.touches.length === 1) startX = event.touches[0].clientX;
+    }, { passive: true });
+    root.addEventListener("touchend", function (event) {
+      if (startX == null || !event.changedTouches.length) return;
+      var delta = event.changedTouches[0].clientX - startX;
+      startX = null;
+      if (Math.abs(delta) < 40) return;
+      show(delta < 0 ? index + 1 : index - 1);
+    }, { passive: true });
+  }).catch(function () {});
+}
+
+function statementGalleryPhotos(list, manifest) {
+  if (!Array.isArray(list)) return [];
+  var base = manifest.replace(/[^/]*$/, "");
+  return list.map(function (item) {
+    var file = typeof item === "string" ? item : item && (item.file || item.src);
+    if (typeof file !== "string") return null;
+    file = file.trim();
+    if (!statementGalleryFilename(file)) return null;
+    var alt = statementGalleryAlt(item, file);
+    var position = item && typeof item === "object" && typeof item.position === "string"
+      ? item.position.trim()
+      : "";
+    return { src: base + file, alt: alt, position: position };
+  }).filter(Boolean);
+}
+
+function statementGalleryFilename(file) {
+  if (!file || file.indexOf("..") !== -1 || file.indexOf("/") !== -1 || file.indexOf("\\") !== -1) return false;
+  return /\.(jpe?g|png|webp)$/i.test(file);
+}
+
+function statementGalleryAlt(item, file) {
+  if (item && typeof item === "object" && typeof item.alt === "string" && item.alt.trim()) {
+    return item.alt.trim();
+  }
+  return file.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+}

@@ -32,8 +32,12 @@
   <section class="section statement" aria-labelledby="statement-heading">
     <div class="wrap split statement-split">
       <figure class="statement-photo">
-        <img src="images/western-bridge.jpg" alt="County Road 30A crossing Western Lake, with coastal dunes beyond" style="object-position: center 45%" decoding="async">
-        <figcaption></a>.</figcaption>
+        <div class="statement-gallery" data-gallery="images/statement-gallery/gallery.json">
+          <button type="button" class="statement-gallery-nav statement-gallery-prev" aria-label="Previous photo" aria-controls="statement-photo" hidden>‹</button>
+          <img id="statement-photo" src="images/statement-gallery/western-bridge.jpg" alt="County Road 30A crossing Western Lake, with coastal dunes beyond" style="object-position: center 45%" decoding="async">
+          <button type="button" class="statement-gallery-nav statement-gallery-next" aria-label="Next photo" aria-controls="statement-photo" hidden>›</button>
+          <p class="statement-gallery-status visually-hidden" aria-live="polite"></p>
+        </div>
       </figure>
       <div class="essay statement-copy">
         <h2 id="statement-heading">One of Florida’s most unusual natural systems</h2>
