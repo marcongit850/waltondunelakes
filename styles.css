@@ -58,7 +58,7 @@ a:hover { color: var(--gulf-deep); }
 
 #explore,
 #about,
-.section { scroll-margin-top: 5.25rem; }
+.section { scroll-margin-top: 11rem; }
 
 .wrap {
   width: min(var(--wrap), calc(100% - 2rem));
@@ -105,26 +105,34 @@ p { text-wrap: pretty; }
   justify-content: space-between;
   gap: 1rem;
   min-height: 4.4rem;
+  padding-block: 0.4rem;
 }
 .brand {
-  color: var(--ink);
-  text-decoration: none;
-  line-height: 1.1;
-}
-.brand:hover { color: var(--gulf); }
-.brand-kicker {
   display: block;
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--sea);
-  font-weight: 700;
+  flex: 0 1 auto;
+  min-width: 0;
+  line-height: 0;
+  text-decoration: none;
 }
-.brand-name {
-  font-family: var(--serif);
-  font-size: 1.35rem;
-  font-weight: 500;
-  letter-spacing: -0.02em;
+.brand-logo {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 7.5rem;
+  max-width: min(16.5rem, 70vw);
+}
+.brand:hover .brand-logo { opacity: 0.9; }
+@media (min-width: 721px) {
+  .brand-logo {
+    max-height: 8rem;
+    max-width: 16rem;
+  }
+}
+@media (min-width: 960px) {
+  .brand-logo {
+    max-height: 9.25rem;
+    max-width: 18rem;
+  }
 }
 .nav-disclosure { position: relative; }
 .menu-toggle {
@@ -489,7 +497,7 @@ p { text-wrap: pretty; }
 .story-photo {
   margin: 0.4rem 0 0;
   position: sticky;
-  top: 5.5rem;
+  top: 10.75rem;
 }
 .story-photo img,
 .bleed-photo img {
@@ -910,6 +918,13 @@ button.button:disabled {
 }
 
 @media (max-width: 720px) {
+  /* The logo is taller than the menu button. Stretch the disclosure so the
+     open menu drops below the header instead of covering the wordmark. */
+  .nav-disclosure {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
   .statement-gallery-nav {
     width: 3rem;
     height: 3rem;

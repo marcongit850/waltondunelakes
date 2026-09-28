@@ -51,12 +51,12 @@ function assertChrome(html, brandHref) {
   assert.match(html, /<header class="site-header">/);
   assert.match(html, /<details class="nav-disclosure">/);
   assert.match(html, /<summary class="menu-toggle">Menu<\/summary>/);
+  const brand = brandHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   assert.match(
     html,
     new RegExp(
-      '<a class="brand" href="' + brandHref.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '">' +
-      '\\s*<span class="brand-kicker">Walton County, Florida</span>' +
-      '\\s*<span class="brand-name">Coastal Dune Lakes</span>'
+      '<a class="brand" href="' + brand + '">' +
+      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes, Walton County, Florida" width="960" height="654">'
     )
   );
   assert.ok(html.indexOf("skip-link") < html.indexOf("<header"), "skip link precedes header");
@@ -189,6 +189,26 @@ for (const path of htmlFiles) {
     assert.doesNotMatch(html, /footer\.js/, `${rel} is redirect-only`);
     continue;
   }
+
+  const style = html.match(/<link rel="stylesheet" href="([^"]*)styles\.css">/);
+  assert.ok(style, `${rel} should load styles.css`);
+  const assetPrefix = style[1].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  assert.match(
+    html,
+    new RegExp(`<link rel="icon" href="${assetPrefix}images/favicon\\.png" type="image/png" sizes="192x192">`),
+    `${rel} favicon png`
+  );
+  assert.match(
+    html,
+    new RegExp(`<link rel="icon" href="${assetPrefix}images/favicon\\.ico" sizes="any">`),
+    `${rel} favicon ico`
+  );
+  assert.match(
+    html,
+    new RegExp(`<link rel="apple-touch-icon" href="${assetPrefix}images/apple-touch-icon\\.png">`),
+    `${rel} apple touch icon`
+  );
+  assert.doesNotMatch(html, /favicon\.svg/, `${rel} should use the Walton Dune Lakes mark`);
 
   const site = html.match(/<script src="([^"]*)site\.js"><\/script>/);
   const footer = html.match(/<script src="([^"]*)footer\.js"><\/script>/);
