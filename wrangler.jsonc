@@ -1,12 +1,11 @@
 {
-  // Cloudflare Worker plus static assets. The Worker name stays douglassemail
-  // for the existing Workers Builds project and custom domains. The GitHub
-  // repo and public domain are waltondunelakes (https://waltondunelakes.com/).
+  // Cloudflare Worker plus static assets. Worker name is waltondunelakes;
+  // public domain waltondunelakes.com; GitHub repo waltondunelakes.
   // An assets-only Worker has no script, so Cloudflare refuses variables
   // ("Variables cannot be added to a Worker that only has static assets").
   // "main" is what makes CONTACT_EMAIL and RESEND_API_KEY possible.
   // Do not put those values here.
-  "name": "douglassemail",
+  "name": "waltondunelakes",
   "main": "src/worker.js",
   "compatibility_date": "2026-09-20",
   "assets": {
