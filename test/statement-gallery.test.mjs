@@ -7,6 +7,7 @@ import vm from "node:vm";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const galleryDir = join(root, "images/statement-gallery");
 const bridgeAlt = "County Road 30A crossing Western Lake, with coastal dunes beyond";
+const outfallAlt = "Shallow turquoise water toward beach houses at a coastal dune lake outfall.";
 
 const home = readFileSync(join(root, "index.html"), "utf8");
 const statement = home.slice(
@@ -17,6 +18,7 @@ const manifest = JSON.parse(readFileSync(join(galleryDir, "gallery.json"), "utf8
 const readme = readFileSync(join(galleryDir, "README.md"), "utf8");
 const westernPage = readFileSync(join(root, "lakes/western/index.html"), "utf8");
 const siteJs = readFileSync(join(root, "site.js"), "utf8");
+const css = readFileSync(join(root, "styles.css"), "utf8");
 
 assert.match(statement, /class="statement-gallery"/);
 assert.match(statement, /data-gallery="images\/statement-gallery\/gallery\.json"/);
@@ -35,14 +37,22 @@ assert.match(westernPage, /src="\.\.\/\.\.\/images\/western-bridge\.jpg"/);
 assert.equal(existsSync(join(root, "images/western-bridge.jpg")), true);
 
 assert.equal(Array.isArray(manifest), true);
+assert.equal(manifest.length, 2);
 assert.equal(manifest[0].file, "western-bridge.jpg");
 assert.equal(manifest[0].alt, bridgeAlt);
+assert.equal(manifest[1].file, "outfall-shore.jpg");
+assert.equal(manifest[1].alt, outfallAlt);
 for (const item of manifest) {
   const file = typeof item === "string" ? item : item.file;
   assert.match(file, /\.(jpe?g|png|webp)$/i);
   assert.equal(file.includes("/"), false);
   assert.equal(existsSync(join(galleryDir, file)), true);
 }
+
+const photoRule = css.slice(css.indexOf(".statement-photo img {"), css.indexOf(".statement-gallery-nav {"));
+assert.match(photoRule, /aspect-ratio:\s*4\s*\/\s*3/);
+assert.match(photoRule, /object-fit:\s*cover/);
+assert.match(css, /\.statement-photo img \{\s*aspect-ratio:\s*16\s*\/\s*10;\s*\}/);
 
 assert.match(readme, /gallery\.json/);
 assert.match(readme, /ask Bob/);
@@ -155,7 +165,9 @@ async function settle() {
   await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
-const single = mount(manifest);
+const single = mount([
+  { file: "western-bridge.jpg", alt: bridgeAlt, position: "center 45%" },
+]);
 await settle();
 assert.equal(single.prev.hidden, true);
 assert.equal(single.next.hidden, true);
@@ -165,6 +177,20 @@ assert.equal(single.img.style.objectPosition, "center 45%");
 assert.equal(single.status.textContent, "");
 assert.equal(single.attrs.role, undefined);
 assert.equal(single.listeners.keydown, undefined);
+
+const live = mount(manifest);
+await settle();
+assert.equal(live.prev.hidden, false);
+assert.equal(live.next.hidden, false);
+assert.equal(live.img.src, "images/statement-gallery/western-bridge.jpg");
+assert.equal(live.img.alt, bridgeAlt);
+assert.equal(live.img.style.objectPosition, "center 45%");
+assert.equal(live.status.textContent, "Photo 1 of 2");
+live.next.listeners.click();
+assert.equal(live.img.src, "images/statement-gallery/outfall-shore.jpg");
+assert.equal(live.img.alt, outfallAlt);
+assert.equal(live.img.style.objectPosition, "center");
+assert.equal(live.status.textContent, "Photo 2 of 2");
 
 const multi = mount([
   { file: "western-bridge.jpg", alt: bridgeAlt, position: "center 45%" },
