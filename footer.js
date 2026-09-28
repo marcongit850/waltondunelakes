@@ -45,7 +45,7 @@
     '      </section>',
     '    </div>',
     '    <nav class="footer-nav" aria-label="Footer">',
-    '      <a href="' + root + '">Home</a>',
+    '      <a href="' + root + '">HOME</a>',
     '      <a href="' + lakesHref + '">THE LAKES</a>',
     '      <a href="' + root + '#about">UNDERSTANDING DUNE LAKES</a>',
     '      <a href="' + contactHref + '"' + contactAttrs + '>CONTACT US</a>',
