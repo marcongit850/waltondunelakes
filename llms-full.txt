@@ -1,0 +1,44 @@
+# Coastal Dune Lakes of Walton County
+
+> Independent educational guide to the 15 rare coastal dune lakes of Walton County, Florida, along about 26 miles of Gulf coast.
+
+This site explains the coastal dune lakes of Walton County, Florida. Fifteen named lakes sit along roughly 26 miles of Gulf coastline, in an unusually dense chain rather than as isolated lakes. The home page introduces the system, an illustrated west-to-east map, and a card for each lake. Each lake has its own page. A separate map page repeats that west-to-east guide. The site is an independent educational resource. It is not affiliated with Walton County, Florida DEP, or the Choctawhatchee Basin Alliance.
+
+Coastal dune lakes are shallow lakes that form behind coastal dunes. Their water ranges from mostly fresh to significantly brackish. Many periodically connect with the Gulf through an outfall, a natural channel across the beach. Most of the time sand forms a berm between the lake and the Gulf. Rainfall, groundwater, and runoff can raise the lake until the outfall opens; waves and storms can open it too. Lake water then flows toward the Gulf, and Gulf water can move back in, which can raise salinity and let marine organisms through. Waves and shifting sand rebuild the berm and close the channel, and the lake begins to freshen again. That connection is intermittent. These lakes are not tidal in the way a bay or estuary stays open to the Gulf. Dark or tea-colored water often comes from natural organic material, and that color does not by itself mean the water is polluted.
+
+The 15 lakes do not all work the same way. Fuller Lake has no direct Gulf outfall and is hydrologically connected with neighboring Morris Lake. Allen Lake's drainage toward the Gulf passes beneath County Road 30A. Each lake has its own shape, access, watershed, vegetation, water chemistry, and degree of Gulf influence. Published acreages are approximate because water levels and shoreline boundaries change. Lake Powell is the largest. Choctawhatchee Basin Alliance measurements place it at roughly 710 acres; some other descriptions use a figure closer to 800 acres.
+
+The Understanding Coastal Dune Lakes section on the home page is a FAQ. It covers what these lakes are, where similar systems occur, outfalls, salinity, watersheds, shoreline vegetation, stormwater, how researchers describe lake health, and why the lakes matter. They support freshwater, brackish-water, wetland, dune, and coastal habitats, and they store and move water through the coastal landscape. Public access varies by lake and includes state parks, county parks, boat ramps, kayaking and fishing access, and the Timpoochee Trail. Rules and facilities are not the same at every lake. The individual lake pages are the place for maps, access, outfalls, water quality, history, and research for one lake.
+
+The lakes, west to east, are Fuller, Morris, Campbell, Stallworth, Allen, Oyster, Draper, Big Redfish, Little Redfish, Alligator, Western, Eastern, Deer, Camp Creek, and Powell.
+
+## Key pages
+
+- [Home](https://waltondunelakes.com/): Guide to the 15 coastal dune lakes, with an illustrated map and a page for each lake.
+- [Understanding Coastal Dune Lakes](https://waltondunelakes.com/#about): FAQ on the home page about what a coastal dune lake is, outfalls, salinity, lake health, and public access.
+- [Map on the home page](https://waltondunelakes.com/#explore): Illustrated west-to-east map of the 15 lakes, from Fuller Lake to Lake Powell.
+- [Map of the lakes](https://waltondunelakes.com/lakes/): West-to-east map and cards for the 15 named coastal dune lakes along County Road 30A.
+- [Contact](https://waltondunelakes.com/contact/): Send questions or corrections about this guide.
+
+## The 15 lakes, west to east
+
+- [Fuller Lake](https://waltondunelakes.com/lakes/fuller/): About 51 acres in Topsail, at the western start of the dune lake chain.
+- [Morris Lake](https://waltondunelakes.com/lakes/morris/): About 86 acres in Topsail Hill Preserve State Park, ringed by ancient dunes.
+- [Campbell Lake](https://waltondunelakes.com/lakes/campbell/): About 110 acres near Topsail; one of Walton County's most intact coastal dune lake systems.
+- [Stallworth Lake](https://waltondunelakes.com/lakes/stallworth/): About 15 acres in Dune Allen, tucked behind the dunes.
+- [Allen Lake](https://waltondunelakes.com/lakes/allen/): About 19 acres in Dune Allen, set into the County Road 30A landscape.
+- [Oyster Lake](https://waltondunelakes.com/lakes/oyster/): About 26 acres in Dune Allen, with one of the coast's most recognizable shapes.
+- [Draper Lake](https://waltondunelakes.com/lakes/draper/): About 40 acres at Blue Mountain Beach, where roads and natural drainage meet.
+- [Big Redfish Lake](https://waltondunelakes.com/lakes/big-redfish/): About 31 acres near Blue Mountain on Scenic 30A.
+- [Little Redfish Lake](https://waltondunelakes.com/lakes/little-redfish/): About 12 acres near Grayton Beach State Park.
+- [Alligator Lake](https://waltondunelakes.com/lakes/alligator/): About 13 acres in Grayton Beach State Park.
+- [Western Lake](https://waltondunelakes.com/lakes/western/): About 244 acres between Grayton Beach and WaterColor; one of the larger coastal dune lakes.
+- [Eastern Lake](https://waltondunelakes.com/lakes/eastern/): About 72 acres in Seagrove, where the neighborhood, outfall, and Gulf meet.
+- [Deer Lake](https://waltondunelakes.com/lakes/deer/): About 42 acres in Deer Lake State Park along 30A.
+- [Camp Creek Lake](https://waltondunelakes.com/lakes/camp-creek/): A long lake of about 63 acres at WaterSound and Camp Creek.
+- [Lake Powell](https://waltondunelakes.com/lakes/powell/): About 710 acres on the Walton and Bay county line; the largest of these coastal dune lakes.
+
+## Optional
+
+- [Short guide for language models](https://waltondunelakes.com/llms.txt): The same URL list, with a shorter introduction.
+- [Sitemap](https://waltondunelakes.com/sitemap.xml): Every public page on this site.
