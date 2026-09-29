@@ -7,5 +7,20 @@
   {
     "file": "outfall-shore.jpg",
     "alt": "Shallow turquoise water toward beach houses at a coastal dune lake outfall."
+  },
+  {
+    "file": "clear-shallow-water-south-walton-beach.jpg",
+    "alt": "Crystal-clear shallow Gulf water over white sand at a South Walton beach",
+    "position": "center 42%"
+  },
+  {
+    "file": "coastal-dune-lake-white-sand-south-walton.jpg",
+    "alt": "Clear water meeting a white sand dune along a South Walton coastal dune lake",
+    "position": "center 42%"
+  },
+  {
+    "file": "coastal-dune-lake-outfall-30a-south-walton.jpg",
+    "alt": "Coastal dune lake outfall opening across the beach into the turquoise Gulf along County Road 30A",
+    "position": "center 38%"
   }
 ]

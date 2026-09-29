@@ -53,6 +53,16 @@ These appear below the aerial on a lake page. A file is named for a lake only wh
 | `images/seagrove-beach.jpg` | Seagrove Beach | TheBeachBro, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Seagrove_Beach.jpg). Also in the Eastern Lake gallery, captioned as the beach. |
 | `images/deer-beach.jpg` | Gulf view from the Deer Lake State Park boardwalk, not the lake surface | Staugbeachbum, public domain, [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:DeerLakeSP.JPG). Also in the Deer Lake gallery. |
 
+## Homepage statement gallery
+
+These photographs sit beside “One of Florida’s most unusual natural systems.” They were supplied for this site. None of them names a single lake.
+
+| File | What it shows |
+| --- | --- |
+| `images/statement-gallery/clear-shallow-water-south-walton-beach.jpg` | Crystal-clear shallow Gulf water over white sand, South Walton beach. |
+| `images/statement-gallery/coastal-dune-lake-white-sand-south-walton.jpg` | Clear water meeting a white sand dune, a coastal dune lake beach scene in South Walton. |
+| `images/statement-gallery/coastal-dune-lake-outfall-30a-south-walton.jpg` | A coastal dune lake outfall opening into the turquoise Gulf along County Road 30A. |
+
 ## Ground-photo search
 
 Wikimedia Commons (title search, place categories, and a geotagged search within 2 km of each lake), Openverse, and Flickr results inside Openverse were searched for a freely licensed ground photograph of each lake. Files that name a different lake were rejected, including Alligator Lake in Columbia County and Redfish Lake in Idaho.
