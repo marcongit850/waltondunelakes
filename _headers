@@ -1,0 +1,7 @@
+# Plain-text guides for language-model crawlers. .txt is already text/plain;
+# these rules keep the type explicit when the files are served from the site root.
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/llms-full.txt
+  Content-Type: text/plain; charset=utf-8

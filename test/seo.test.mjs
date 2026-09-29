@@ -126,6 +126,28 @@ assert.equal(contact["@type"], "ContactPage");
 const robots = read("robots.txt");
 assert.match(robots, /User-agent: \*\nAllow: \/\n/);
 assert.match(robots, /Sitemap: https:\/\/waltondunelakes\.com\/sitemap\.xml/);
+assert.equal(/^\s*Disallow\s*:/m.test(robots), false);
+assert.match(robots, /# llms\.txt: https:\/\/waltondunelakes\.com\/llms\.txt/);
+assert.match(robots, /# llms-full\.txt: https:\/\/waltondunelakes\.com\/llms-full\.txt/);
+
+const crawlers = [
+  "Googlebot",
+  "Bingbot",
+  "GPTBot",
+  "ChatGPT-User",
+  "Google-Extended",
+  "ClaudeBot",
+  "anthropic-ai",
+  "PerplexityBot",
+  "Applebot-Extended",
+  "Bytespider",
+  "CCBot",
+  "meta-externalagent",
+  "FacebookBot",
+];
+for (const agent of crawlers) {
+  assert.match(robots, new RegExp(`User-agent: ${agent}\\nAllow: /\\n`), agent);
+}
 
 const sitemap = read("sitemap.xml");
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
@@ -134,6 +156,26 @@ assert.deepEqual(locs, pages.map(([, url]) => url));
 const ignore = read(".assetsignore");
 assert.equal(ignore.includes("robots.txt"), false);
 assert.equal(ignore.includes("sitemap.xml"), false);
+assert.equal(ignore.includes("llms.txt"), false);
+assert.equal(ignore.includes("llms-full.txt"), false);
+
+const llms = read("llms.txt");
+const llmsFull = read("llms-full.txt");
+assert.ok(llmsFull.length > llms.length);
+const publicUrls = [...pages.map(([, url]) => url), `${ORIGIN}/#about`, `${ORIGIN}/#explore`];
+for (const body of [llms, llmsFull]) {
+  assert.equal(body.includes("<"), false, "llms file should be plain text");
+  assert.equal(/get-involved|\/impact\/|\/membership\//.test(body), false);
+  for (const url of publicUrls) {
+    assert.ok(body.includes(url), "missing " + url);
+  }
+  assert.ok(body.includes(`${ORIGIN}/sitemap.xml`));
+}
+assert.ok(llms.includes(`${ORIGIN}/llms-full.txt`));
+assert.ok(llmsFull.includes(`${ORIGIN}/llms.txt`));
+const headers = read("_headers");
+assert.match(headers, /\/llms\.txt\n {2}Content-Type: text\/plain; charset=utf-8/);
+assert.match(headers, /\/llms-full\.txt\n {2}Content-Type: text\/plain; charset=utf-8/);
 const wrangler = read("wrangler.jsonc");
 assert.match(wrangler, /"directory": "\."/);
 assert.equal(wrangler.includes("sitemap"), false);
