@@ -56,7 +56,7 @@ function assertResources(html) {
     html,
     /<a href="https:\/\/www\.scenicwalton\.org\/" target="_blank" rel="noopener noreferrer">Scenic Walton<span class="visually-hidden"> \(opens in a new tab\)<\/span><\/a>/
   );
-  assert.match(html, /Independent educational resource\./);
+  assert.match(html, /Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance\./);
 }
 
 const cases = [
@@ -64,90 +64,90 @@ const cases = [
     pathname: "/",
     src: "footer.js",
     links: [
-      ["./", "Home", ""],
-      ["./lakes/", "The lakes", ""],
-      ["./#about", "Understanding Coastal Dune Lakes", ""],
-      ["./contact/", "Contact Us", ""],
+      ["./", "HOME", ""],
+      ["./lakes/", "THE LAKES", ""],
+      ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/index.html",
     src: "footer.js",
     links: [
-      ["./", "Home", ""],
-      ["./lakes/", "The lakes", ""],
-      ["./#about", "Understanding Coastal Dune Lakes", ""],
-      ["./contact/", "Contact Us", ""],
+      ["./", "HOME", ""],
+      ["./lakes/", "THE LAKES", ""],
+      ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/contact/",
     src: "../footer.js",
     links: [
-      ["../", "Home", ""],
-      ["../lakes/", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["./", "Contact Us", ' aria-current="page"'],
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
   {
     pathname: "/contact/index.html",
     src: "../footer.js",
     links: [
-      ["../", "Home", ""],
-      ["../lakes/", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["./", "Contact Us", ' aria-current="page"'],
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
   {
     pathname: "/lakes/",
     src: "../footer.js",
     links: [
-      ["../", "Home", ""],
-      ["./", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../contact/", "Contact Us", ""],
+      ["../", "HOME", ""],
+      ["./", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/lakes/index.html",
     src: "../footer.js",
     links: [
-      ["../", "Home", ""],
-      ["./", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../contact/", "Contact Us", ""],
+      ["../", "HOME", ""],
+      ["./", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/lakes/western/",
     src: "../../footer.js",
     links: [
-      ["../../", "Home", ""],
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact Us", ""],
+      ["../../", "HOME", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/lakes/western/index.html",
     src: "../../footer.js",
     links: [
-      ["../../", "Home", ""],
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact Us", ""],
+      ["../../", "HOME", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT US", ""],
     ],
   },
   {
     pathname: "/lakes/camp-creek",
     src: "../../footer.js",
     links: [
-      ["../../", "Home", ""],
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact Us", ""],
+      ["../../", "HOME", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT US", ""],
     ],
   },
 ];

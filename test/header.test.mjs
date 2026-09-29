@@ -68,9 +68,9 @@ const cases = [
     src: "header.js",
     brand: "./",
     links: [
-      ["./lakes/", "The lakes", ""],
-      ["./#about", "Understanding Coastal Dune Lakes", ""],
-      ["./contact/", "Contact", ""],
+      ["./lakes/", "THE LAKES", ""],
+      ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./contact/", "CONTACT", ""],
     ],
   },
   {
@@ -78,9 +78,9 @@ const cases = [
     src: "header.js",
     brand: "./",
     links: [
-      ["./lakes/", "The lakes", ""],
-      ["./#about", "Understanding Coastal Dune Lakes", ""],
-      ["./contact/", "Contact", ""],
+      ["./lakes/", "THE LAKES", ""],
+      ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./contact/", "CONTACT", ""],
     ],
   },
   {
@@ -88,9 +88,9 @@ const cases = [
     src: "../header.js",
     brand: "../",
     links: [
-      ["../lakes/", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["./", "Contact", ' aria-current="page"'],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "CONTACT", ' aria-current="page"'],
     ],
   },
   {
@@ -98,9 +98,9 @@ const cases = [
     src: "../header.js",
     brand: "../",
     links: [
-      ["../lakes/", "The lakes", ""],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["./", "Contact", ' aria-current="page"'],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "CONTACT", ' aria-current="page"'],
     ],
   },
   {
@@ -108,9 +108,9 @@ const cases = [
     src: "../header.js",
     brand: "../",
     links: [
-      ["./", "The lakes", ' aria-current="page"'],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../contact/", "Contact", ""],
+      ["./", "THE LAKES", ' aria-current="page"'],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../contact/", "CONTACT", ""],
     ],
   },
   {
@@ -118,9 +118,9 @@ const cases = [
     src: "../header.js",
     brand: "../",
     links: [
-      ["./", "The lakes", ' aria-current="page"'],
-      ["../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../contact/", "Contact", ""],
+      ["./", "THE LAKES", ' aria-current="page"'],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../contact/", "CONTACT", ""],
     ],
   },
   {
@@ -128,9 +128,9 @@ const cases = [
     src: "../../header.js",
     brand: "../../",
     links: [
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT", ""],
     ],
   },
   {
@@ -138,9 +138,9 @@ const cases = [
     src: "../../header.js",
     brand: "../../",
     links: [
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT", ""],
     ],
   },
   {
@@ -148,9 +148,9 @@ const cases = [
     src: "../../header.js",
     brand: "../../",
     links: [
-      ["../", "The lakes", ""],
-      ["../../#about", "Understanding Coastal Dune Lakes", ""],
-      ["../../contact/", "Contact", ""],
+      ["../", "THE LAKES", ""],
+      ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../contact/", "CONTACT", ""],
     ],
   },
 ];
