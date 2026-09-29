@@ -8,6 +8,9 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const galleryDir = join(root, "images/statement-gallery");
 const bridgeAlt = "County Road 30A crossing Western Lake, with coastal dunes beyond";
 const outfallAlt = "Shallow turquoise water toward beach houses at a coastal dune lake outfall.";
+const clearAlt = "Crystal-clear shallow Gulf water over white sand at a South Walton beach";
+const duneAlt = "Clear water meeting a white sand dune along a South Walton coastal dune lake";
+const gulfOutfallAlt = "Coastal dune lake outfall opening across the beach into the turquoise Gulf along County Road 30A";
 
 const home = readFileSync(join(root, "index.html"), "utf8");
 const statement = home.slice(
@@ -37,11 +40,20 @@ assert.match(westernPage, /src="\.\.\/\.\.\/images\/western-bridge\.jpg"/);
 assert.equal(existsSync(join(root, "images/western-bridge.jpg")), true);
 
 assert.equal(Array.isArray(manifest), true);
-assert.equal(manifest.length, 2);
+assert.equal(manifest.length, 5);
 assert.equal(manifest[0].file, "western-bridge.jpg");
 assert.equal(manifest[0].alt, bridgeAlt);
 assert.equal(manifest[1].file, "outfall-shore.jpg");
 assert.equal(manifest[1].alt, outfallAlt);
+assert.equal(manifest[2].file, "clear-shallow-water-south-walton-beach.jpg");
+assert.equal(manifest[2].alt, clearAlt);
+assert.equal(manifest[2].position, "center 42%");
+assert.equal(manifest[3].file, "coastal-dune-lake-white-sand-south-walton.jpg");
+assert.equal(manifest[3].alt, duneAlt);
+assert.equal(manifest[3].position, "center 42%");
+assert.equal(manifest[4].file, "coastal-dune-lake-outfall-30a-south-walton.jpg");
+assert.equal(manifest[4].alt, gulfOutfallAlt);
+assert.equal(manifest[4].position, "center 38%");
 for (const item of manifest) {
   const file = typeof item === "string" ? item : item.file;
   assert.match(file, /\.(jpe?g|png|webp)$/i);
@@ -185,12 +197,30 @@ assert.equal(live.next.hidden, false);
 assert.equal(live.img.src, "images/statement-gallery/western-bridge.jpg");
 assert.equal(live.img.alt, bridgeAlt);
 assert.equal(live.img.style.objectPosition, "center 45%");
-assert.equal(live.status.textContent, "Photo 1 of 2");
+assert.equal(live.status.textContent, "Photo 1 of 5");
 live.next.listeners.click();
 assert.equal(live.img.src, "images/statement-gallery/outfall-shore.jpg");
 assert.equal(live.img.alt, outfallAlt);
 assert.equal(live.img.style.objectPosition, "center");
-assert.equal(live.status.textContent, "Photo 2 of 2");
+assert.equal(live.status.textContent, "Photo 2 of 5");
+live.next.listeners.click();
+assert.equal(live.img.src, "images/statement-gallery/clear-shallow-water-south-walton-beach.jpg");
+assert.equal(live.img.alt, clearAlt);
+assert.equal(live.img.style.objectPosition, "center 42%");
+assert.equal(live.status.textContent, "Photo 3 of 5");
+live.next.listeners.click();
+assert.equal(live.img.src, "images/statement-gallery/coastal-dune-lake-white-sand-south-walton.jpg");
+assert.equal(live.img.alt, duneAlt);
+assert.equal(live.img.style.objectPosition, "center 42%");
+assert.equal(live.status.textContent, "Photo 4 of 5");
+live.next.listeners.click();
+assert.equal(live.img.src, "images/statement-gallery/coastal-dune-lake-outfall-30a-south-walton.jpg");
+assert.equal(live.img.alt, gulfOutfallAlt);
+assert.equal(live.img.style.objectPosition, "center 38%");
+assert.equal(live.status.textContent, "Photo 5 of 5");
+live.next.listeners.click();
+assert.equal(live.img.src, "images/statement-gallery/western-bridge.jpg");
+assert.equal(live.status.textContent, "Photo 1 of 5");
 
 const multi = mount([
   { file: "western-bridge.jpg", alt: bridgeAlt, position: "center 45%" },
