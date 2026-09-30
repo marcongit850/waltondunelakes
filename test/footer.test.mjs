@@ -202,7 +202,10 @@ for (const path of htmlFiles) {
   assert.doesNotMatch(html, /<footer\b/, `${rel} should not inline a footer`);
   if (rel === "index.html") {
     assert.match(html, /class="partner-strip"/);
-    assert.match(html, /Watched in Partnership/);
+    assert.match(html, /aria-label="Partners"/);
+    assert.doesNotMatch(html, /Watched in Partnership/);
+    assert.doesNotMatch(html, /These organizations monitor, study, or care/);
+    assert.doesNotMatch(html, /class="partner-name"/);
     assert.match(html, /images\/partners\/choctawhatchee-basin-alliance\.png"/);
     assert.match(html, /alt="Choctawhatchee Basin Alliance"/);
     assert.match(html, /https:\/\/www\.basinalliance\.org\//);
@@ -216,7 +219,11 @@ for (const path of htmlFiles) {
     assert.match(html, /images\/partners\/scenic-walton\.png"/);
     assert.match(html, /alt="Scenic Walton"/);
     assert.match(html, /https:\/\/www\.scenic\.org\/scenic-walton\//);
-    assert.match(html, /class="partner-name"[^>]*>UF\/IFAS Florida LAKEWATCH/);
+    assert.match(html, /images\/partners\/walton-county\.png"/);
+    assert.match(html, /alt="Walton County"/);
+    assert.match(html, /https:\/\/www\.mywaltonfl\.gov\/97\/Coastal-Dune-Lakes/);
+    assert.match(html, /images\/partners\/uf-ifas\.png"/);
+    assert.match(html, /alt="UF\/IFAS Florida LAKEWATCH"/);
     assert.match(html, /https:\/\/lakewatch\.ifas\.ufl\.edu\//);
     assert.equal(html.includes("—"), false);
     assert.equal(html.includes("–"), false);
