@@ -202,10 +202,24 @@ for (const path of htmlFiles) {
   assert.doesNotMatch(html, /<footer\b/, `${rel} should not inline a footer`);
   if (rel === "index.html") {
     assert.match(html, /class="partner-strip"/);
+    assert.match(html, /Watched in Partnership/);
+    assert.match(html, /images\/partners\/choctawhatchee-basin-alliance\.png"/);
+    assert.match(html, /alt="Choctawhatchee Basin Alliance"/);
+    assert.match(html, /https:\/\/www\.basinalliance\.org\//);
+    assert.match(html, /https:\/\/basinalliance-wq-dashboard\.share\.connect\.posit\.cloud\//);
+    assert.match(html, /images\/partners\/visit-south-walton\.svg"/);
+    assert.match(html, /alt="Visit South Walton"/);
+    assert.match(html, /https:\/\/www\.visitsouthwalton\.com\//);
     assert.match(html, /images\/partners\/friends-of-scenic-30a\.png"/);
     assert.match(html, /alt="Friends of Scenic 30A"/);
+    assert.match(html, /https:\/\/www\.friendsofscenic30a\.org\//);
     assert.match(html, /images\/partners\/scenic-walton\.png"/);
     assert.match(html, /alt="Scenic Walton"/);
+    assert.match(html, /https:\/\/www\.scenic\.org\/scenic-walton\//);
+    assert.match(html, /class="partner-name"[^>]*>UF\/IFAS Florida LAKEWATCH/);
+    assert.match(html, /https:\/\/lakewatch\.ifas\.ufl\.edu\//);
+    assert.equal(html.includes("—"), false);
+    assert.equal(html.includes("–"), false);
   } else {
     assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|partner-strip|images\/partners\//, `${rel} should not repeat partner logos`);
   }
