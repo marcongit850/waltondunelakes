@@ -39,7 +39,7 @@
     '<header class="site-header">',
     '  <div class="wrap header-inner">',
     '    <a class="brand" href="' + root + '">',
-    '      <img class="brand-logo" src="' + root + 'images/logo-coastal-dune-lakes.png" alt="Coastal Dune Lakes" width="840" height="590">',
+    '      <img class="brand-logo" src="' + root + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="840" height="595">',
     '    </a>',
     '    <details class="nav-disclosure">',
     '      <summary class="menu-toggle">Menu</summary>',
