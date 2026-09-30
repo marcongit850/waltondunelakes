@@ -58,7 +58,7 @@ a:hover { color: var(--gulf-deep); }
 
 #explore,
 #about,
-.section { scroll-margin-top: 6.5rem; }
+.section { scroll-margin-top: 10rem; }
 
 .wrap {
   width: min(var(--wrap), calc(100% - 2rem));
@@ -118,20 +118,21 @@ p { text-wrap: pretty; }
   display: block;
   width: auto;
   height: auto;
-  max-height: 3.75rem;
-  max-width: min(8.25rem, 35vw);
+  max-height: 6.25rem;
+  max-width: min(15rem, 64vw);
+  background: transparent;
 }
 .brand:hover .brand-logo { opacity: 0.9; }
 @media (min-width: 721px) {
   .brand-logo {
-    max-height: 4rem;
-    max-width: 8rem;
+    max-height: 7.25rem;
+    max-width: 17.5rem;
   }
 }
 @media (min-width: 960px) {
   .brand-logo {
-    max-height: 4.625rem;
-    max-width: 9rem;
+    max-height: 8rem;
+    max-width: 19rem;
   }
 }
 .nav-disclosure { position: relative; }
@@ -797,17 +798,45 @@ p { text-wrap: pretty; }
   color: #b7cdd2;
 }
 .site-footer a { color: white; }
-.footer-partners { margin-top: 1.15rem; }
-.partner-list {
+.partner-strip {
+  padding: 2.2rem 0 2.6rem;
+  background: white;
+  border-top: 1px solid var(--line);
+}
+.partner-strip h2 {
+  margin: 0 0 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sea);
+}
+.partner-logos {
   list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.15rem 2.4rem;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
 }
-.partner-list a { font-weight: 600; text-decoration: none; }
-.partner-list a:hover { text-decoration: underline; text-underline-offset: 0.15em; }
+.partner-logos a {
+  display: flex;
+  align-items: center;
+  line-height: 0;
+  text-decoration: none;
+}
+.partner-logos img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 4rem;
+  max-width: min(16rem, 78vw);
+  object-fit: contain;
+  background: transparent;
+}
+.partner-logos a:hover img { opacity: 0.8; }
 .footer-nav { display: flex; flex-direction: column; gap: 0.4rem; }
 .footer-nav a { font-weight: 600; text-decoration: none; }
 .footer-nav a:hover { text-decoration: underline; text-underline-offset: 0.15em; }

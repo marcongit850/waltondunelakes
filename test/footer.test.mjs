@@ -46,17 +46,10 @@ function navLinks(html) {
   }));
 }
 
-function assertResources(html) {
-  assert.match(html, /<h2 id="partners-heading">Resources<\/h2>/);
-  assert.match(
-    html,
-    /<a href="https:\/\/www\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Friends of Scenic 30A<span class="visually-hidden"> \(opens in a new tab\)<\/span><\/a>/
-  );
-  assert.match(
-    html,
-    /<a href="https:\/\/www\.scenicwalton\.org\/" target="_blank" rel="noopener noreferrer">Scenic Walton<span class="visually-hidden"> \(opens in a new tab\)<\/span><\/a>/
-  );
+function assertFooterIdentity(html) {
+  assert.match(html, /<h2>Coastal Dune Lakes of Walton County<\/h2>/);
   assert.match(html, /Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance\./);
+  assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|footer-partners|partners-heading|>Resources</);
 }
 
 const cases = [
@@ -186,7 +179,7 @@ const cases = [
 for (const item of cases) {
   const html = renderFooter(item.pathname, item.src);
   assert.equal(html.match(/<footer/g).length, 1, item.pathname);
-  assertResources(html);
+  assertFooterIdentity(html);
   const links = navLinks(html);
   assert.deepEqual(
     links.map((link) => [link.href, link.text, link.attrs]),
@@ -207,7 +200,15 @@ for (const path of htmlFiles) {
   const rel = relative(root, path);
   const html = readFileSync(path, "utf8");
   assert.doesNotMatch(html, /<footer\b/, `${rel} should not inline a footer`);
-  assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton/, `${rel} should not duplicate Resources links`);
+  if (rel === "index.html") {
+    assert.match(html, /class="partner-strip"/);
+    assert.match(html, /images\/partners\/friends-of-scenic-30a\.png"/);
+    assert.match(html, /alt="Friends of Scenic 30A"/);
+    assert.match(html, /images\/partners\/scenic-walton\.png"/);
+    assert.match(html, /alt="Scenic Walton"/);
+  } else {
+    assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|partner-strip|images\/partners\//, `${rel} should not repeat partner logos`);
+  }
 
   if (redirectPages.has(rel)) {
     assert.doesNotMatch(html, /footer\.js/, `${rel} is redirect-only`);

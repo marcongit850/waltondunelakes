@@ -1,5 +1,6 @@
 // The only site footer. Pages load this script where the footer should appear.
-// Edit the markup here to change navigation and Resources on every page.
+// Edit the markup here to change navigation on every page.
+// Partner logos live on the homepage only, not in this footer.
 // Redirect-only pages (get-involved, impact, membership) do not load it.
 //
 // Relative links follow the script src: each "../" is one directory above
@@ -39,13 +40,6 @@
     '    <div>',
     '      <h2>Coastal Dune Lakes of Walton County</h2>',
     '      <p class="legal">Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance.</p>',
-    '      <section class="footer-partners" aria-labelledby="partners-heading">',
-    '        <h2 id="partners-heading">Resources</h2>',
-    '        <ul class="partner-list">',
-    '          <li><a href="https://www.friendsofscenic30a.org/" target="_blank" rel="noopener noreferrer">Friends of Scenic 30A<span class="visually-hidden"> (opens in a new tab)</span></a></li>',
-    '          <li><a href="https://www.scenicwalton.org/" target="_blank" rel="noopener noreferrer">Scenic Walton<span class="visually-hidden"> (opens in a new tab)</span></a></li>',
-    '        </ul>',
-    '      </section>',
     '    </div>',
     '    <nav class="footer-nav" aria-label="Footer">',
     '      <a href="' + root + '">HOME</a>',
