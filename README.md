@@ -35,7 +35,7 @@ The old Pages `functions/` folder and `_routes.json` are not used. Workers stati
 - `/` explains what coastal dune lakes are, and leads into the map and lake cards
 - `/lakes/` is the guide map and the same west-to-east cards
 - `/lakes/<slug>/` is one lake, for example `/lakes/western/`
-- `/the-data/` summarizes publicly presented water-quality education and points to the Choctawhatchee Basin Alliance dashboard. Tables and figures from the 2025 update are still placeholders.
+- `/the-data/` presents the 2025 Coastal Dune Lake Water Quality Update from CBAEP, with the published figures, the trend table, and links to the live CBA dashboard.
 - `/contact/` is a short form for questions and corrections
 
 The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` and the API key from `env.RESEND_API_KEY`. It does not put either value in the pages sent to the browser.

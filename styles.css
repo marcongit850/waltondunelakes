@@ -872,9 +872,107 @@ p { text-wrap: pretty; }
   max-width: 46rem;
   color: var(--muted);
 }
-.data-section { margin-top: 2.6rem; }
+.data-section { margin-top: 2.8rem; scroll-margin-top: 10rem; }
 .data-section > h2 { margin-bottom: 0.5rem; }
-.data-section > p { max-width: 68ch; }
+.data-section > p,
+.data-section li { max-width: 68ch; }
+.data-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin: 1.35rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+.data-toc a { text-decoration: none; }
+.data-toc a:hover { text-decoration: underline; text-underline-offset: 0.15em; }
+.data-columns,
+.data-split {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+.data-columns { grid-template-columns: repeat(3, 1fr); }
+.data-split { grid-template-columns: 1fr 1fr; }
+.data-columns article,
+.data-split article,
+.trophic-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 1.05rem 1.1rem 1.15rem;
+}
+.data-columns h3,
+.data-split h3,
+.trophic-card h3 { margin: 0 0 0.45rem; font-size: 1.25rem; }
+.data-columns ul,
+.data-split ul,
+.trophic-card ul { margin: 0.35rem 0 0; padding-left: 1.15rem; }
+.data-columns li + li,
+.data-split li + li,
+.trophic-card li + li,
+.field-notes li + li { margin-top: 0.35rem; }
+.data-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 1.15rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.data-stats article { padding: 1rem 1.05rem 1.1rem; }
+.data-stats article:nth-child(3n + 2),
+.data-stats article:nth-child(3n) { box-shadow: inset 1px 0 0 var(--line); }
+.data-stats article:nth-child(n + 4) { box-shadow: inset 0 1px 0 var(--line); }
+.data-stats article:nth-child(n + 4):nth-child(3n + 2),
+.data-stats article:nth-child(n + 4):nth-child(3n) {
+  box-shadow: inset 1px 0 0 var(--line), inset 0 1px 0 var(--line);
+}
+.data-stat-label {
+  margin: 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sea);
+}
+.data-stat-value {
+  margin: 0.25rem 0 0;
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+.trophic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin-top: 1.1rem;
+}
+.trophic-card p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.trophic-card .trophic-band {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sea);
+}
+.field-notes { margin: 1rem 0 0; padding-left: 1.15rem; }
+.field-notes li { max-width: 68ch; }
+.trend-table { min-width: 48rem; }
+.trend-table th:first-child,
+.trend-table td:first-child {
+  position: sticky;
+  left: 0;
+  background: white;
+  box-shadow: 1px 0 0 var(--line);
+}
+.trend-table thead th { background: var(--foam); }
+.trend-table td:not(:first-child),
+.trend-table th:not(:first-child) { text-align: center; }
+.data-table thead th { background: var(--foam); }
 .table-scroll {
   margin-top: 1.15rem;
   background: white;
@@ -1051,6 +1149,13 @@ button.button:disabled {
 .form-status.is-success { color: var(--gulf); }
 
 @media (max-width: 980px) {
+  .data-columns,
+  .trophic-grid { grid-template-columns: 1fr 1fr; }
+  .data-stats { grid-template-columns: 1fr 1fr; }
+  .data-stats article:nth-child(odd) { box-shadow: none; }
+  .data-stats article:nth-child(even) { box-shadow: inset 1px 0 0 var(--line); }
+  .data-stats article:nth-child(n + 3) { box-shadow: inset 0 1px 0 var(--line); }
+  .data-stats article:nth-child(even):nth-child(n + 3) { box-shadow: inset 1px 0 0 var(--line), inset 0 1px 0 var(--line); }
   .lake-grid { grid-template-columns: 1fr 1fr; }
   .split, .split.statement-split, .lake-layout, .footer-grid { grid-template-columns: 1fr; }
   .split.statement-split { align-items: start; }
@@ -1100,6 +1205,13 @@ button.button:disabled {
   .hero-photo { min-height: 78vh; }
   .hero-copy, .lake-hero-copy, .banner-copy { padding: 3rem 0 4.2rem; }
   .lake-grid { grid-template-columns: 1fr; }
+  .data-columns,
+  .data-split,
+  .trophic-grid,
+  .data-stats { grid-template-columns: 1fr; }
+  .data-stats article,
+  .data-stats article + article { box-shadow: inset 0 1px 0 var(--line); }
+  .data-stats article:first-child { box-shadow: none; }
   .facts { grid-template-columns: 1fr; }
   .facts article,
   .facts article + article { box-shadow: inset 0 1px 0 var(--line); }
