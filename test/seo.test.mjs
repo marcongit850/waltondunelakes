@@ -24,6 +24,7 @@ const pages = [
   ["lakes/deer/index.html", `${ORIGIN}/lakes/deer/`],
   ["lakes/camp-creek/index.html", `${ORIGIN}/lakes/camp-creek/`],
   ["lakes/powell/index.html", `${ORIGIN}/lakes/powell/`],
+  ["the-data/index.html", `${ORIGIN}/the-data/`],
   ["contact/index.html", `${ORIGIN}/contact/`],
 ];
 
@@ -122,6 +123,18 @@ assert.equal(list.itemListElement[14].url, `${ORIGIN}/lakes/powell/`);
 
 const contact = jsonLd(read("contact/index.html"));
 assert.equal(contact["@type"], "ContactPage");
+
+const dataPage = read("the-data/index.html");
+assert.equal(jsonLd(dataPage)["@type"], "WebPage");
+assert.match(dataPage, /<h1>THE DATA<\/h1>/);
+assert.match(dataPage, /Kayla Wingard, CBAEP/);
+assert.match(dataPage, /Hyman 2026 Coastal Dune Lake 2025 Water Chemistry Report/);
+assert.match(dataPage, /https:\/\/basinalliance-wq-dashboard\.share\.connect\.posit\.cloud\//);
+assert.match(dataPage, /https:\/\/www\.basinalliance\.org\//);
+assert.match(dataPage, /Credit: Choctawhatchee Basin Alliance \(CBAEP\)/);
+assert.match(dataPage, /for public education only/);
+assert.equal(dataPage.includes("—"), false);
+assert.equal((dataPage.match(/<h1[\s>]/g) || []).length, 1);
 
 const robots = read("robots.txt");
 assert.match(robots, /User-agent: \*\nAllow: \/\n/);

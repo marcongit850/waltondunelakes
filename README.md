@@ -22,7 +22,7 @@ npm test
 
 Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. `"name"` is `waltondunelakes`. That Worker serves the public domain https://waltondunelakes.com/. The GitHub repository name is `waltondunelakes`. The previous `douglassemail` Worker no longer serves this site.
 
-`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
+`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/the-data/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
 This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to Resend, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through the Resend HTTP API (`https://api.resend.com/emails`).
 
@@ -35,6 +35,7 @@ The old Pages `functions/` folder and `_routes.json` are not used. Workers stati
 - `/` explains what coastal dune lakes are, and leads into the map and lake cards
 - `/lakes/` is the guide map and the same west-to-east cards
 - `/lakes/<slug>/` is one lake, for example `/lakes/western/`
+- `/the-data/` summarizes publicly presented water-quality education and points to the Choctawhatchee Basin Alliance dashboard. Tables and figures from the 2025 update are still placeholders.
 - `/contact/` is a short form for questions and corrections
 
 The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` and the API key from `env.RESEND_API_KEY`. It does not put either value in the pages sent to the browser.

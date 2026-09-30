@@ -67,6 +67,7 @@ const cases = [
       ["./", "HOME", ""],
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT US", ""],
     ],
   },
@@ -77,6 +78,7 @@ const cases = [
       ["./", "HOME", ""],
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT US", ""],
     ],
   },
@@ -87,6 +89,7 @@ const cases = [
       ["../", "HOME", ""],
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
@@ -97,6 +100,7 @@ const cases = [
       ["../", "HOME", ""],
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
@@ -107,6 +111,7 @@ const cases = [
       ["../", "HOME", ""],
       ["./", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT US", ""],
     ],
   },
@@ -117,6 +122,7 @@ const cases = [
       ["../", "HOME", ""],
       ["./", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT US", ""],
     ],
   },
@@ -127,6 +133,7 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
     ],
   },
@@ -137,6 +144,7 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
     ],
   },
@@ -147,7 +155,30 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/",
+    src: "../footer.js",
+    links: [
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT US", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/index.html",
+    src: "../footer.js",
+    links: [
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT US", ""],
     ],
   },
 ];
@@ -195,7 +226,7 @@ for (const path of htmlFiles) {
   pagesWithFooter.push(rel);
 }
 
-assert.equal(pagesWithFooter.length, 18);
+assert.equal(pagesWithFooter.length, 19);
 
 assert.match(wrangler, /"main": "src\/worker\.js"/);
 assert.match(wrangler, /"directory": "\."/);

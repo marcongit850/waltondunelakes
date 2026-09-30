@@ -71,6 +71,7 @@ const cases = [
     links: [
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT", ""],
     ],
   },
@@ -81,6 +82,7 @@ const cases = [
     links: [
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT", ""],
     ],
   },
@@ -91,6 +93,7 @@ const cases = [
     links: [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT", ' aria-current="page"'],
     ],
   },
@@ -101,6 +104,7 @@ const cases = [
     links: [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT", ' aria-current="page"'],
     ],
   },
@@ -111,6 +115,7 @@ const cases = [
     links: [
       ["./", "THE LAKES", ' aria-current="page"'],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT", ""],
     ],
   },
@@ -121,6 +126,7 @@ const cases = [
     links: [
       ["./", "THE LAKES", ' aria-current="page"'],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT", ""],
     ],
   },
@@ -131,6 +137,7 @@ const cases = [
     links: [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT", ""],
     ],
   },
@@ -141,6 +148,7 @@ const cases = [
     links: [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT", ""],
     ],
   },
@@ -151,7 +159,30 @@ const cases = [
     links: [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/",
+    src: "../header.js",
+    brand: "../",
+    links: [
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/index.html",
+    src: "../header.js",
+    brand: "../",
+    links: [
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT", ""],
     ],
   },
 ];
@@ -229,7 +260,7 @@ for (const path of htmlFiles) {
   pagesWithHeader.push(rel);
 }
 
-assert.equal(pagesWithHeader.length, 18);
+assert.equal(pagesWithHeader.length, 19);
 
 assert.match(wrangler, /"main": "src\/worker\.js"/);
 assert.match(wrangler, /"directory": "\."/);
