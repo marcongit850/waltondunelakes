@@ -10,6 +10,7 @@ These shallow lakes sit behind the dunes and periodically reconnect with the Gul
 - [Understanding Coastal Dune Lakes](https://waltondunelakes.com/#about): FAQ on the home page about what a coastal dune lake is, outfalls, salinity, lake health, and public access.
 - [Map on the home page](https://waltondunelakes.com/#explore): Illustrated west-to-east map of the 15 lakes, from Fuller Lake to Lake Powell.
 - [Map of the lakes](https://waltondunelakes.com/lakes/): West-to-east map and cards for the 15 named coastal dune lakes along County Road 30A.
+- [The data](https://waltondunelakes.com/the-data/): Public education summary of coastal dune lake water quality in Walton County. Live monitoring stays with the Choctawhatchee Basin Alliance.
 - [Contact](https://waltondunelakes.com/contact/): Send questions or corrections about this guide.
 
 ## The 15 lakes, west to east

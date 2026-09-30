@@ -46,17 +46,10 @@ function navLinks(html) {
   }));
 }
 
-function assertResources(html) {
-  assert.match(html, /<h2 id="partners-heading">Resources<\/h2>/);
-  assert.match(
-    html,
-    /<a href="https:\/\/www\.friendsofscenic30a\.org\/" target="_blank" rel="noopener noreferrer">Friends of Scenic 30A<span class="visually-hidden"> \(opens in a new tab\)<\/span><\/a>/
-  );
-  assert.match(
-    html,
-    /<a href="https:\/\/www\.scenicwalton\.org\/" target="_blank" rel="noopener noreferrer">Scenic Walton<span class="visually-hidden"> \(opens in a new tab\)<\/span><\/a>/
-  );
+function assertFooterIdentity(html) {
+  assert.match(html, /<h2>Coastal Dune Lakes of Walton County<\/h2>/);
   assert.match(html, /Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance\./);
+  assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|footer-partners|partners-heading|>Resources</);
 }
 
 const cases = [
@@ -67,6 +60,7 @@ const cases = [
       ["./", "HOME", ""],
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT US", ""],
     ],
   },
@@ -77,6 +71,7 @@ const cases = [
       ["./", "HOME", ""],
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./the-data/", "THE DATA", ""],
       ["./contact/", "CONTACT US", ""],
     ],
   },
@@ -87,6 +82,7 @@ const cases = [
       ["../", "HOME", ""],
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
@@ -97,6 +93,7 @@ const cases = [
       ["../", "HOME", ""],
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["./", "CONTACT US", ' aria-current="page"'],
     ],
   },
@@ -107,6 +104,7 @@ const cases = [
       ["../", "HOME", ""],
       ["./", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT US", ""],
     ],
   },
@@ -117,6 +115,7 @@ const cases = [
       ["../", "HOME", ""],
       ["./", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../the-data/", "THE DATA", ""],
       ["../contact/", "CONTACT US", ""],
     ],
   },
@@ -127,6 +126,7 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
     ],
   },
@@ -137,6 +137,7 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
     ],
   },
@@ -147,7 +148,30 @@ const cases = [
       ["../../", "HOME", ""],
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["../../the-data/", "THE DATA", ""],
       ["../../contact/", "CONTACT US", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/",
+    src: "../footer.js",
+    links: [
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT US", ""],
+    ],
+  },
+  {
+    pathname: "/the-data/index.html",
+    src: "../footer.js",
+    links: [
+      ["../", "HOME", ""],
+      ["../lakes/", "THE LAKES", ""],
+      ["../#about", "UNDERSTANDING DUNE LAKES", ""],
+      ["./", "THE DATA", ' aria-current="page"'],
+      ["../contact/", "CONTACT US", ""],
     ],
   },
 ];
@@ -155,7 +179,7 @@ const cases = [
 for (const item of cases) {
   const html = renderFooter(item.pathname, item.src);
   assert.equal(html.match(/<footer/g).length, 1, item.pathname);
-  assertResources(html);
+  assertFooterIdentity(html);
   const links = navLinks(html);
   assert.deepEqual(
     links.map((link) => [link.href, link.text, link.attrs]),
@@ -176,7 +200,29 @@ for (const path of htmlFiles) {
   const rel = relative(root, path);
   const html = readFileSync(path, "utf8");
   assert.doesNotMatch(html, /<footer\b/, `${rel} should not inline a footer`);
-  assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton/, `${rel} should not duplicate Resources links`);
+  if (rel === "index.html") {
+    assert.match(html, /class="partner-strip"/);
+    assert.match(html, /Watched in Partnership/);
+    assert.match(html, /images\/partners\/choctawhatchee-basin-alliance\.png"/);
+    assert.match(html, /alt="Choctawhatchee Basin Alliance"/);
+    assert.match(html, /https:\/\/www\.basinalliance\.org\//);
+    assert.match(html, /https:\/\/basinalliance-wq-dashboard\.share\.connect\.posit\.cloud\//);
+    assert.match(html, /images\/partners\/visit-south-walton\.svg"/);
+    assert.match(html, /alt="Visit South Walton"/);
+    assert.match(html, /https:\/\/www\.visitsouthwalton\.com\//);
+    assert.match(html, /images\/partners\/friends-of-scenic-30a\.png"/);
+    assert.match(html, /alt="Friends of Scenic 30A"/);
+    assert.match(html, /https:\/\/www\.friendsofscenic30a\.org\//);
+    assert.match(html, /images\/partners\/scenic-walton\.png"/);
+    assert.match(html, /alt="Scenic Walton"/);
+    assert.match(html, /https:\/\/www\.scenic\.org\/scenic-walton\//);
+    assert.match(html, /class="partner-name"[^>]*>UF\/IFAS Florida LAKEWATCH/);
+    assert.match(html, /https:\/\/lakewatch\.ifas\.ufl\.edu\//);
+    assert.equal(html.includes("—"), false);
+    assert.equal(html.includes("–"), false);
+  } else {
+    assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|partner-strip|images\/partners\//, `${rel} should not repeat partner logos`);
+  }
 
   if (redirectPages.has(rel)) {
     assert.doesNotMatch(html, /footer\.js/, `${rel} is redirect-only`);
@@ -195,7 +241,7 @@ for (const path of htmlFiles) {
   pagesWithFooter.push(rel);
 }
 
-assert.equal(pagesWithFooter.length, 18);
+assert.equal(pagesWithFooter.length, 19);
 
 assert.match(wrangler, /"main": "src\/worker\.js"/);
 assert.match(wrangler, /"directory": "\."/);

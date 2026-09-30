@@ -25,24 +25,28 @@
   var onLakePage = /\/lakes\/[^/]+\/$/.test(path);
   var onLakesIndex = /\/lakes\/$/.test(path) && !onLakePage;
   var onContact = /\/contact\/$/.test(path);
+  var onData = /\/the-data\/$/.test(path);
 
   var lakesHref = onLakePage ? "../" : onLakesIndex ? "./" : root + "lakes/";
   var contactHref = onContact ? "./" : root + "contact/";
+  var dataHref = onData ? "./" : root + "the-data/";
   var lakesAttrs = onLakesIndex ? ' aria-current="page"' : "";
   var contactAttrs = onContact ? ' aria-current="page"' : "";
+  var dataAttrs = onData ? ' aria-current="page"' : "";
 
   script.insertAdjacentHTML("beforebegin", [
     '<a class="skip-link" href="#content">Skip to content</a>',
     '<header class="site-header">',
     '  <div class="wrap header-inner">',
     '    <a class="brand" href="' + root + '">',
-    '      <img class="brand-logo" src="' + root + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes, Walton County, Florida" width="960" height="654">',
+    '      <img class="brand-logo" src="' + root + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="840" height="595">',
     '    </a>',
     '    <details class="nav-disclosure">',
     '      <summary class="menu-toggle">Menu</summary>',
     '      <nav class="nav" id="site-nav" aria-label="Primary">',
     '        <a href="' + lakesHref + '"' + lakesAttrs + '>THE LAKES</a>',
     '        <a href="' + root + '#about">UNDERSTANDING DUNE LAKES</a>',
+    '        <a href="' + dataHref + '"' + dataAttrs + '>THE DATA</a>',
     '        <a href="' + contactHref + '"' + contactAttrs + '>CONTACT</a>',
     '      </nav>',
     '    </details>',
