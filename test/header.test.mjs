@@ -57,7 +57,7 @@ function assertChrome(html, brandHref) {
     html,
     new RegExp(
       '<a class="brand" href="' + brand + '">' +
-      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="840" height="595">'
+      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="444">'
     )
   );
   assert.ok(html.indexOf("skip-link") < html.indexOf("<header"), "skip link precedes header");
