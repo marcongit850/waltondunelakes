@@ -46,10 +46,34 @@ function navLinks(html) {
   }));
 }
 
-function assertFooterIdentity(html) {
+function rootFromScriptSrc(scriptSrc) {
+  let src = scriptSrc;
+  let depth = 0;
+  while (src.startsWith("../")) {
+    depth += 1;
+    src = src.slice(3);
+  }
+  return depth === 0 ? "./" : "../".repeat(depth);
+}
+
+function assertFooterIdentity(html, scriptSrc) {
   assert.match(html, /<h2>Coastal Dune Lakes of Walton County<\/h2>/);
   assert.match(html, /Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance\./);
-  assert.doesNotMatch(html, /friendsofscenic30a|scenicwalton|footer-partners|partners-heading|>Resources</);
+  assert.doesNotMatch(html, /scenicwalton|footer-partners|partners-heading|>Resources</);
+
+  const friends = html.match(/<div class="footer-friends">[\s\S]*?<\/div>/);
+  assert.ok(friends, "footer friends block missing");
+  const logoSrc = rootFromScriptSrc(scriptSrc) + "images/partners/friends-of-scenic-30a.png";
+  assert.match(
+    friends[0],
+    /<p>Please be sure to check out<\/p>\s*<a href="https:\/\/friendsofscenic30a\.org\/">\s*<img src="([^"]+)" width="1000" height="320" alt="Friends of Scenic 30A">\s*<\/a>/
+  );
+  const src = friends[0].match(/src="([^"]+)"/)[1];
+  assert.equal(src, logoSrc);
+  assert.ok(
+    html.indexOf('class="footer-friends"') < html.indexOf('class="footer-nav"'),
+    "friends mark should sit in the left column"
+  );
 }
 
 const cases = [
@@ -179,7 +203,7 @@ const cases = [
 for (const item of cases) {
   const html = renderFooter(item.pathname, item.src);
   assert.equal(html.match(/<footer/g).length, 1, item.pathname);
-  assertFooterIdentity(html);
+  assertFooterIdentity(html, item.src);
   const links = navLinks(html);
   assert.deepEqual(
     links.map((link) => [link.href, link.text, link.attrs]),
