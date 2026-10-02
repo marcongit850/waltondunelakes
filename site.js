@@ -41,6 +41,15 @@
     var scroll = frame.querySelector(".map-scroll");
     if (!buttons.length || !panels.length) return;
 
+    function updateEastEnd() {
+      if (!scroll || !frame.classList.contains("is-satellite")) {
+        frame.classList.remove("is-east-end");
+        return;
+      }
+      var remaining = scroll.scrollWidth - scroll.clientWidth - scroll.scrollLeft;
+      frame.classList.toggle("is-east-end", remaining < 32);
+    }
+
     function setMode(mode) {
       buttons.forEach(function (button) {
         var on = button.getAttribute("data-map-mode") === mode;
@@ -59,7 +68,13 @@
         var active = frame.querySelector('[data-map-panel="' + mode + '"]');
         var label = active && active.getAttribute("data-map-label");
         if (label) scroll.setAttribute("aria-label", label);
+        window.requestAnimationFrame(updateEastEnd);
       }
+    }
+
+    if (scroll) {
+      scroll.addEventListener("scroll", updateEastEnd, { passive: true });
+      window.addEventListener("resize", updateEastEnd);
     }
 
     buttons.forEach(function (button) {

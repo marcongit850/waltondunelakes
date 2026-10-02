@@ -311,6 +311,7 @@
       <button type="button" data-map-mode="satellite" aria-pressed="false">Satellite</button>
     </div>
   </div>
+  <div class="map-viewport">
   <div class="map-scroll" tabindex="0" role="region" aria-label="Illustrated map of the coastal dune lakes from west to east. Scroll horizontally on a small screen.">
     <div class="coast-map illustrated-map" data-map-panel="illustration" data-map-label="Illustrated map of the coastal dune lakes from west to east. Scroll horizontally on a small screen.">
       <img src="images/dune-lakes-map.png" width="1672" height="941" alt="Illustrated map of Walton County’s coastal dune lakes, from Fuller Lake in the west to Lake Powell in the east." decoding="async">
@@ -392,7 +393,7 @@
         </a>
       </svg>
     </div>
-    <div class="coast-map satellite-map" data-map-panel="satellite" data-map-label="Satellite map of the coastal dune lakes from west to east. Scroll horizontally on a small screen." hidden>
+    <div class="coast-map satellite-map" data-map-panel="satellite" data-map-label="Satellite map of the coastal dune lakes from Fuller Lake to Lake Powell. Scroll horizontally to reach the eastern lakes." hidden>
       <picture>
         <source srcset="images/dune-lakes-satellite.webp" type="image/webp">
         <img src="images/dune-lakes-satellite.jpg" width="3000" height="1100" alt="Satellite view of Walton County’s coastal dune lakes, from Fuller Lake in the west to Lake Powell in the east." decoding="async">
@@ -506,7 +507,10 @@
       </svg>
     </div>
   </div>
+  <p class="map-more">Scroll east</p>
+  </div>
   <p class="map-caption" id="map-caption">Choose a lake or its name. West is left and east is right.</p>
+  <p class="map-east-note">The chain continues east of Western Lake: Eastern Lake, Deer Lake, Camp Creek Lake, and Lake Powell. Scroll sideways to reach them.</p>
   <p class="map-credit">Satellite imagery: Esri, Maxar, Earthstar Geographics, and the GIS User Community.</p>
 </div>
 
