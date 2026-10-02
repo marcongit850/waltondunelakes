@@ -159,6 +159,17 @@ p { text-wrap: pretty; }
     height: auto;
     content-visibility: visible;
   }
+  .nav a { white-space: nowrap; }
+}
+/* The Friends of Scenic 30A label is wider than Contact was. Below 1000px
+   it collides with the wordmark, so the links move to their own row. */
+@media (min-width: 721px) and (max-width: 999px) {
+  .header-inner {
+    flex-wrap: wrap;
+    row-gap: 0.15rem;
+  }
+  .nav-disclosure { flex: 1 0 100%; }
+  .nav { justify-content: flex-end; }
 }
 .nav a {
   color: var(--ink);
