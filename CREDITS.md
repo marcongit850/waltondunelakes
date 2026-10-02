@@ -74,3 +74,7 @@ Verified ground photographs that name the water:
 - Oyster Lake: a green heron at the outflow, in the gallery, captioned as the bird at the cut.
 
 No freely licensed ground photograph turned up for Fuller, Morris, Campbell, Stallworth, Allen, Draper, Big Redfish, Little Redfish, Alligator, Eastern, the surface of Deer Lake, or Camp Creek that the file text identifies as that lake. Where a Commons file clearly shows the park or beach beside that lake, it is in the gallery with a caption that names the real place. Fuller, Stallworth, Allen, Draper, Big Redfish, and Camp Creek have no such extra, so those pages show only the aerial.
+
+## Satellite map
+
+`images/dune-lakes-satellite.jpg` and `images/dune-lakes-satellite.webp` are a web-sized crop of Esri World Imagery for the coastal dune lakes, from Fuller Lake to Lake Powell. Lake names on the satellite view are drawn in the page, not burned into the image. The map credit line is: Satellite imagery: Esri, Maxar, Earthstar Geographics, and the GIS User Community.

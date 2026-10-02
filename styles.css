@@ -371,42 +371,137 @@ p { text-wrap: pretty; }
   -webkit-overflow-scrolling: touch;
 }
 .map-scroll:focus-visible { outline-offset: -3px; }
-.illustrated-map {
+.map-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem 0;
+  background: white;
+}
+.map-toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--foam);
+}
+.map-toggle button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.38rem 0.95rem;
+  cursor: pointer;
+}
+.map-toggle button[aria-pressed="true"] {
+  background: var(--gulf);
+  color: white;
+}
+.map-toggle button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.coast-map {
   position: relative;
   width: 100%;
   min-width: 920px;
   line-height: 0;
   background: #e8f4fb;
 }
-.illustrated-map img {
+.coast-map img {
   display: block;
   width: 100%;
   height: auto;
 }
-.illustrated-map svg {
+.coast-map svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
-.illustrated-map a {
+.coast-map a {
   pointer-events: auto;
   cursor: pointer;
 }
-.illustrated-map .lake-hit {
+.coast-map .lake-hit {
   fill: transparent;
   stroke: transparent;
   stroke-width: 3;
   stroke-linejoin: round;
 }
-.illustrated-map a:hover .lake-hit,
-.illustrated-map a:focus-visible .lake-hit,
-.illustrated-map a.is-active .lake-hit {
+.coast-map a:hover .lake-hit,
+.coast-map a:focus-visible .lake-hit,
+.coast-map a.is-active .lake-hit {
   fill: rgba(244, 225, 166, 0.62);
   stroke: #102e36;
 }
-.illustrated-map a:focus-visible { outline: none; }
+.coast-map a:focus-visible { outline: none; }
+.satellite-map {
+  min-width: 2100px;
+  background: #16303a;
+}
+.satellite-map .lake-hit { stroke-width: 5; }
+.satellite-map .lake-name,
+.satellite-map .map-place {
+  font-family: var(--sans);
+  font-weight: 700;
+  fill: #fff;
+  stroke: #102e36;
+  paint-order: stroke fill;
+  pointer-events: none;
+}
+.satellite-map .lake-name {
+  font-size: 20px;
+  stroke-width: 4px;
+}
+.satellite-map .map-place {
+  font-size: 30px;
+  stroke-width: 6px;
+}
+.satellite-map .gulf-label {
+  font-size: 18px;
+  stroke-width: 4px;
+}
+.satellite-map a:hover .lake-name,
+.satellite-map a:focus-visible .lake-name,
+.satellite-map a.is-active .lake-name {
+  fill: #102e36;
+  stroke: #fff;
+  stroke-width: 3.5px;
+}
+.satellite-map .lake-leader,
+.satellite-map .lake-leader-halo {
+  fill: none;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+.satellite-map .lake-leader-halo {
+  stroke: #fff;
+  stroke-width: 6;
+}
+.satellite-map .lake-leader {
+  stroke: #102e36;
+  stroke-width: 2.5;
+}
+.satellite-map a:hover .lake-leader,
+.satellite-map a:focus-visible .lake-leader,
+.satellite-map a.is-active .lake-leader {
+  stroke-width: 3.5;
+}
+.map-credit {
+  display: none;
+  margin: 0;
+  padding: 0 1rem 0.9rem;
+  background: white;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.map-frame.is-satellite .map-credit { display: block; }
 .map-caption {
   margin: 0;
   padding: 0.85rem 1rem 1rem;
