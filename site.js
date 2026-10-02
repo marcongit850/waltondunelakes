@@ -35,6 +35,40 @@
     });
   }
 
+  document.querySelectorAll(".map-frame").forEach(function (frame) {
+    var buttons = frame.querySelectorAll("[data-map-mode]");
+    var panels = frame.querySelectorAll("[data-map-panel]");
+    var scroll = frame.querySelector(".map-scroll");
+    if (!buttons.length || !panels.length) return;
+
+    function setMode(mode) {
+      buttons.forEach(function (button) {
+        var on = button.getAttribute("data-map-mode") === mode;
+        button.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      panels.forEach(function (panel) {
+        var on = panel.getAttribute("data-map-panel") === mode;
+        if (!on && panel.contains(document.activeElement)) {
+          document.activeElement.blur();
+        }
+        if (on) panel.removeAttribute("hidden");
+        else panel.setAttribute("hidden", "");
+      });
+      frame.classList.toggle("is-satellite", mode === "satellite");
+      if (scroll) {
+        var active = frame.querySelector('[data-map-panel="' + mode + '"]');
+        var label = active && active.getAttribute("data-map-label");
+        if (label) scroll.setAttribute("aria-label", label);
+      }
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener("click", function () {
+        setMode(button.getAttribute("data-map-mode"));
+      });
+    });
+  });
+
   var form = document.getElementById("contact-form");
   if (form) {
     var status = document.getElementById("form-status");
