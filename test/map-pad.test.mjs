@@ -37,6 +37,8 @@ for (const file of ["index.html", "lakes/index.html"]) {
   );
   assert.equal(satellite.includes("map-pad"), false, file + " pad scrolls with the photo");
   assert.match(satellite, /Arrow keys pan and zoom when this map is focused/);
+  assert.equal(html.includes("Gulf of Mexico"), false, file + " old gulf label");
+  assert.equal(html.includes(">Gulf of America<"), true, file + " gulf label");
 }
 
 const css = read("styles.css");
