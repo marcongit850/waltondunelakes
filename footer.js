@@ -1,6 +1,7 @@
 // The only site footer. Pages load this script where the footer should appear.
 // Edit the markup here to change navigation on every page.
-// Partner logos live on the homepage only, not in this footer.
+// The Friends of Scenic 30A mark sits at the bottom left. Other partner
+// logos stay on the homepage partner strip.
 // Redirect-only pages (get-involved, impact, membership) do not load it.
 //
 // Relative links follow the script src: each "../" is one directory above
@@ -37,9 +38,17 @@
   script.insertAdjacentHTML("beforebegin", [
     '<footer class="site-footer">',
     '  <div class="wrap footer-grid">',
-    '    <div>',
-    '      <h2>Coastal Dune Lakes of Walton County</h2>',
-    '      <p class="legal">Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance.</p>',
+    '    <div class="footer-intro">',
+    '      <div>',
+    '        <h2>Coastal Dune Lakes of Walton County</h2>',
+    '        <p class="legal">Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance.</p>',
+    '      </div>',
+    '      <div class="footer-friends">',
+    '        <p>Please be sure to check out</p>',
+    '        <a href="https://friendsofscenic30a.org/">',
+    '          <img src="' + root + 'images/partners/friends-of-scenic-30a.png" width="1000" height="320" alt="Friends of Scenic 30A">',
+    '        </a>',
+    '      </div>',
     '    </div>',
     '    <nav class="footer-nav" aria-label="Footer">',
     '      <a href="' + root + '">HOME</a>',
