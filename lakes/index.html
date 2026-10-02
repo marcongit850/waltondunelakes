@@ -200,7 +200,22 @@
     </div>
   </div>
   <div class="map-viewport">
-  <div class="map-scroll" tabindex="0" role="region" aria-label="Illustrated map of the coastal dune lakes from west to east.">
+  <div class="map-pad" role="group" aria-label="Satellite map controls" aria-controls="coast-map-scroll">
+    <button type="button" class="map-pad-btn" data-map-move="in" aria-label="Zoom in">
+      <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 2.2 10.2 8.2H1.8z"/></svg>
+    </button>
+    <button type="button" class="map-pad-btn" data-map-move="west" aria-label="Pan west">
+      <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M2.2 6l6-4.2v8.4z"/></svg>
+    </button>
+    <button type="button" class="map-pad-btn" data-map-move="east" aria-label="Pan east">
+      <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M9.8 6 3.8 10.2V1.8z"/></svg>
+    </button>
+    <button type="button" class="map-pad-btn" data-map-move="out" aria-label="Zoom out">
+      <svg viewBox="0 0 12 12" aria-hidden="true" focusable="false"><path d="M6 9.8 1.8 3.8h8.4z"/></svg>
+    </button>
+    <span class="map-pad-hub" aria-hidden="true"></span>
+  </div>
+  <div class="map-scroll" id="coast-map-scroll" tabindex="0" role="region" aria-label="Illustrated map of the coastal dune lakes from west to east.">
     <div class="coast-map illustrated-map" data-map-panel="illustration" data-map-label="Illustrated map of the coastal dune lakes from west to east.">
       <img src="../images/dune-lakes-map.png" width="1672" height="941" alt="Illustrated map of Walton County’s coastal dune lakes, from Fuller Lake in the west to Lake Powell in the east." decoding="async">
       <svg class="lake-overlay" viewBox="0 0 1672 941" role="group" aria-label="Lakes on the map">
@@ -281,7 +296,7 @@
         </a>
       </svg>
     </div>
-    <div class="coast-map satellite-map" data-map-panel="satellite" data-map-label="Satellite map of the coastal dune lakes from Fuller Lake to Lake Powell. Scroll horizontally to reach the eastern lakes." hidden>
+    <div class="coast-map satellite-map" data-map-panel="satellite" data-map-label="Satellite map of the coastal dune lakes from Fuller Lake to Lake Powell. Scroll horizontally to reach the eastern lakes. Arrow keys pan and zoom when this map is focused." hidden>
       <picture>
         <source srcset="../images/dune-lakes-satellite.webp" type="image/webp">
         <img src="../images/dune-lakes-satellite.jpg" width="3000" height="1100" alt="Satellite view of Walton County’s coastal dune lakes, from Fuller Lake in the west to Lake Powell in the east." decoding="async">
