@@ -72,7 +72,7 @@ const cases = [
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
       ["./the-data/", "THE DATA", ""],
-      ["./contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -83,7 +83,7 @@ const cases = [
       ["./lakes/", "THE LAKES", ""],
       ["./#about", "UNDERSTANDING DUNE LAKES", ""],
       ["./the-data/", "THE DATA", ""],
-      ["./contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -94,7 +94,7 @@ const cases = [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../the-data/", "THE DATA", ""],
-      ["./", "CONTACT", ' aria-current="page"'],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -105,7 +105,7 @@ const cases = [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../the-data/", "THE DATA", ""],
-      ["./", "CONTACT", ' aria-current="page"'],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -116,7 +116,7 @@ const cases = [
       ["./", "THE LAKES", ' aria-current="page"'],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../the-data/", "THE DATA", ""],
-      ["../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -127,7 +127,7 @@ const cases = [
       ["./", "THE LAKES", ' aria-current="page"'],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../the-data/", "THE DATA", ""],
-      ["../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -138,7 +138,7 @@ const cases = [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../../the-data/", "THE DATA", ""],
-      ["../../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -149,7 +149,7 @@ const cases = [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../../the-data/", "THE DATA", ""],
-      ["../../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -160,7 +160,7 @@ const cases = [
       ["../", "THE LAKES", ""],
       ["../../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["../../the-data/", "THE DATA", ""],
-      ["../../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -171,7 +171,7 @@ const cases = [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["./", "THE DATA", ' aria-current="page"'],
-      ["../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
   {
@@ -182,7 +182,7 @@ const cases = [
       ["../lakes/", "THE LAKES", ""],
       ["../#about", "UNDERSTANDING DUNE LAKES", ""],
       ["./", "THE DATA", ' aria-current="page"'],
-      ["../contact/", "CONTACT", ""],
+      ["https://friendsofscenic30a.org/", "FRIENDS OF SCENIC 30A", ""],
     ],
   },
 ];
