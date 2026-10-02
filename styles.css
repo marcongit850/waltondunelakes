@@ -462,6 +462,7 @@ p { text-wrap: pretty; }
 .map-frame.is-satellite .map-scroll {
   scrollbar-color: #0f3d4c #e7f2f0;
   scrollbar-width: auto;
+  overscroll-behavior: contain;
 }
 .map-frame.is-satellite .map-scroll::-webkit-scrollbar { height: 12px; }
 .map-frame.is-satellite .map-scroll::-webkit-scrollbar-track { background: #e7f2f0; }
@@ -488,6 +489,63 @@ p { text-wrap: pretty; }
 }
 .map-more::after { content: " \2192"; }
 .map-frame.is-satellite:not(.is-east-end) .map-more { display: block; }
+.map-pad {
+  display: none;
+  position: absolute;
+  z-index: 3;
+  left: 1.1rem;
+  bottom: 2.9rem;
+  grid-template-columns: repeat(3, 2.35rem);
+  grid-template-rows: repeat(3, 2.35rem);
+  gap: 0.28rem;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+}
+.map-frame.is-satellite .map-pad { display: grid; }
+.map-pad-btn {
+  pointer-events: auto;
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(16, 46, 54, 0.35);
+  border-radius: 8px;
+  background: rgba(255, 252, 246, 0.94);
+  color: #102e36;
+  box-shadow: 0 6px 16px rgba(8, 24, 32, 0.28);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.map-pad-btn svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  display: block;
+  fill: currentColor;
+}
+.map-pad-btn:hover { background: #f4e1a6; }
+.map-pad-btn:active { background: #e4cd86; }
+.map-pad-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.map-pad-btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+  background: rgba(255, 252, 246, 0.72);
+}
+.map-pad-btn[data-map-move="in"] { grid-column: 2; grid-row: 1; }
+.map-pad-btn[data-map-move="west"] { grid-column: 1; grid-row: 2; }
+.map-pad-btn[data-map-move="east"] { grid-column: 3; grid-row: 2; }
+.map-pad-btn[data-map-move="out"] { grid-column: 2; grid-row: 3; }
+.map-pad-hub {
+  grid-column: 2;
+  grid-row: 2;
+  border-radius: 8px;
+  background: rgba(8, 38, 49, 0.38);
+  box-shadow: inset 0 0 0 1px rgba(255, 252, 246, 0.38);
+}
 .map-east-note {
   display: none;
   margin: 0;
@@ -1414,7 +1472,8 @@ button.button:disabled {
 
 @media print {
   .site-header { position: static; }
-  .menu-toggle { display: none; }
+  .menu-toggle,
+  .map-frame.is-satellite .map-pad { display: none; }
   .nav { display: flex !important; }
   .hero-photo, .lake-hero, .banner { min-height: 0; color: black; }
   .hero-photo::after, .lake-hero::after, .banner::after { display: none; }
