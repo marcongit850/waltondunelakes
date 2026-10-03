@@ -1,6 +1,7 @@
 // The only site footer. Pages load this script where the footer should appear.
 // Edit the markup here to change navigation on every page.
-// The Friends of Scenic 30A mark sits at the bottom left. Other partner
+// The Friends of Scenic 30A mark sits at the bottom left. A sponsored ad
+// for Eating on 30A and Eating in Destin sits to its right. Other partner
 // logos stay on the homepage partner strip.
 // Redirect-only pages (get-involved, impact, membership) do not load it.
 //
@@ -43,11 +44,25 @@
     '        <h2>Coastal Dune Lakes of Walton County</h2>',
     '        <p class="legal">Not affiliated with Walton County, Florida DEP, or Choctawhatchee Basin Alliance.</p>',
     '      </div>',
-    '      <div class="footer-friends">',
-    '        <p>Please be sure to check out</p>',
-    '        <a href="https://friendsofscenic30a.org/">',
-    '          <img src="' + root + 'images/partners/friends-of-scenic-30a.png" width="1000" height="320" alt="Friends of Scenic 30A">',
-    '        </a>',
+    '      <div class="footer-marks">',
+    '        <div class="footer-friends">',
+    '          <p>Please be sure to check out</p>',
+    '          <a href="https://friendsofscenic30a.org/">',
+    '            <img src="' + root + 'images/partners/friends-of-scenic-30a.png" width="1000" height="320" alt="Friends of Scenic 30A">',
+    '          </a>',
+    '        </div>',
+    '        <div class="footer-sponsor">',
+    '          <p>Sponsored by</p>',
+    '          <div class="footer-sponsor-ad">',
+    '            <img src="' + root + 'images/sponsors/eating-on-30a-eating-in-destin.webp" width="1120" height="672" alt="Eating on 30A and Eating in Destin" loading="lazy">',
+    '            <a class="footer-sponsor-link footer-sponsor-30a" href="https://www.eatingon30a.com/" target="_blank" rel="noopener noreferrer">',
+    '              <span class="visually-hidden">Eating on 30A (opens in a new tab)</span>',
+    '            </a>',
+    '            <a class="footer-sponsor-link footer-sponsor-destin" href="https://www.eatingindestin.com/" target="_blank" rel="noopener noreferrer">',
+    '              <span class="visually-hidden">Eating in Destin (opens in a new tab)</span>',
+    '            </a>',
+    '          </div>',
+    '        </div>',
     '      </div>',
     '    </div>',
     '    <nav class="footer-nav" aria-label="Footer">',
