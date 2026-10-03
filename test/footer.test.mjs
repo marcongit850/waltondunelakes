@@ -74,6 +74,33 @@ function assertFooterIdentity(html, scriptSrc) {
     html.indexOf('class="footer-friends"') < html.indexOf('class="footer-nav"'),
     "friends mark should sit in the left column"
   );
+
+  const sponsorSrc = rootFromScriptSrc(scriptSrc) + "images/sponsors/eating-on-30a-eating-in-destin.webp";
+  assert.match(html, /<p>Sponsored by<\/p>/);
+  assert.match(
+    html,
+    new RegExp(
+      `<img src="${sponsorSrc.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}" width="1120" height="672" alt="Eating on 30A and Eating in Destin" loading="lazy">`
+    )
+  );
+  assert.match(
+    html,
+    /<a class="footer-sponsor-link footer-sponsor-30a" href="https:\/\/www\.eatingon30a\.com\/" target="_blank" rel="noopener noreferrer">\s*<span class="visually-hidden">Eating on 30A \(opens in a new tab\)<\/span>\s*<\/a>/
+  );
+  assert.match(
+    html,
+    /<a class="footer-sponsor-link footer-sponsor-destin" href="https:\/\/www\.eatingindestin\.com\/" target="_blank" rel="noopener noreferrer">\s*<span class="visually-hidden">Eating in Destin \(opens in a new tab\)<\/span>\s*<\/a>/
+  );
+  assert.ok(
+    html.indexOf('class="footer-friends"') < html.indexOf('class="footer-sponsor"'),
+    "sponsor ad should sit to the right of the friends mark"
+  );
+  assert.ok(
+    html.indexOf('class="footer-sponsor"') < html.indexOf('class="footer-nav"'),
+    "sponsor ad should stay in the left footer column"
+  );
+  assert.equal(html.includes("—"), false);
+  assert.equal(html.includes("–"), false);
 }
 
 const cases = [
@@ -273,6 +300,11 @@ for (const path of htmlFiles) {
 }
 
 assert.equal(pagesWithFooter.length, 19);
+
+const sponsorAd = join(root, "images/sponsors/eating-on-30a-eating-in-destin.webp");
+const sponsorBytes = statSync(sponsorAd).size;
+assert.ok(sponsorBytes < 200 * 1024, `sponsor ad should stay under 200KB, got ${sponsorBytes}`);
+assert.ok(sponsorBytes > 40 * 1024, `sponsor ad looks too small to be the real artwork, got ${sponsorBytes}`);
 
 assert.match(wrangler, /"main": "src\/worker\.js"/);
 assert.match(wrangler, /"directory": "\."/);

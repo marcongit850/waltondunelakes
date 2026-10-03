@@ -1020,7 +1020,15 @@ p { text-wrap: pretty; }
   gap: 1.15rem;
   min-width: 0;
 }
-.footer-friends p {
+.footer-marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1.15rem 1.75rem;
+}
+.footer-friends { flex: 0 1 auto; }
+.footer-friends p,
+.footer-sponsor p {
   margin: 0 0 0.45rem;
   max-width: 38rem;
   font-size: 0.82rem;
@@ -1051,6 +1059,38 @@ p { text-wrap: pretty; }
   width: 11.25rem;
   max-width: 100%;
   height: auto;
+}
+.footer-sponsor {
+  flex: 1 1 18rem;
+  min-width: min(100%, 16rem);
+  max-width: 24rem;
+}
+.footer-sponsor-ad {
+  position: relative;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  line-height: 0;
+}
+.footer-sponsor-ad img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.footer-sponsor-link {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+}
+.footer-sponsor-30a { left: 0; }
+.footer-sponsor-destin { right: 0; }
+.footer-sponsor-link:hover,
+.footer-sponsor-link:focus-visible {
+  background: rgba(255, 255, 255, 0.14);
+}
+.footer-sponsor-link:focus-visible {
+  outline: 2px solid white;
+  outline-offset: -4px;
 }
 .site-footer a { color: white; }
 .partner-strip {
