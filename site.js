@@ -334,7 +334,65 @@
 
   var gallery = document.querySelector(".statement-gallery");
   if (gallery) initStatementGallery(gallery);
+
+  var heroAvatar = document.querySelector(".hero-avatar");
+  if (heroAvatar) initHeroAvatar(heroAvatar);
 })();
+
+function initHeroAvatar(root) {
+  var video = root.querySelector(".hero-avatar-video");
+  var button = root.querySelector(".hero-avatar-control");
+  var playIcon = root.querySelector(".hero-avatar-icon-play");
+  var stopIcon = root.querySelector(".hero-avatar-icon-stop");
+  if (!video || !button) return;
+
+  var playToken = 0;
+
+  function setControl(playing) {
+    if (playIcon) playIcon.hidden = playing;
+    if (stopIcon) stopIcon.hidden = !playing;
+    button.setAttribute("aria-label", playing ? "Stop video" : "Play video");
+  }
+
+  function showPoster() {
+    playToken += 1;
+    video.pause();
+    try {
+      video.currentTime = 0;
+    } catch (err) {}
+    root.classList.remove("is-playing");
+    setControl(false);
+  }
+
+  function play() {
+    var attempt = playToken + 1;
+    playToken = attempt;
+    video.muted = false;
+    video.defaultMuted = false;
+    video.removeAttribute("muted");
+    setControl(true);
+    var pending = video.play();
+    if (pending && typeof pending.then === "function") {
+      pending.then(function () {
+        if (attempt !== playToken) video.pause();
+      }).catch(function () {
+        if (attempt === playToken) showPoster();
+      });
+    }
+  }
+
+  button.addEventListener("click", function () {
+    if (button.getAttribute("aria-label") === "Stop video") showPoster();
+    else play();
+  });
+
+  video.addEventListener("playing", function () {
+    if (video.paused) return;
+    root.classList.add("is-playing");
+  });
+
+  video.addEventListener("ended", showPoster);
+}
 
 function initStatementGallery(root) {
   var frame = root.querySelector("img");
