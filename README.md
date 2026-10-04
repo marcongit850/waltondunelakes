@@ -22,7 +22,7 @@ npm test
 
 Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. `"name"` is `waltondunelakes`. That Worker serves the public domain https://waltondunelakes.com/. The GitHub repository name is `waltondunelakes`. The previous `douglassemail` Worker no longer serves this site.
 
-`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is only `/api/contact` and `/api/contact/`, so those requests run the contact handler. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/the-data/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
+`main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is `/api/contact`, `/api/contact/`, `/api/favorite`, and `/api/favorite/`. Those requests run the Worker. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/the-data/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
 This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to Resend, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through the Resend HTTP API (`https://api.resend.com/emails`).
 
@@ -50,6 +50,34 @@ After this change is merged and deployed, set the Worker values in Cloudflare:
 4. Redeploy after saving so the Worker picks up the secret.
 
 Do not commit the address or the API key in `wrangler.jsonc`. Until `CONTACT_EMAIL` or `RESEND_API_KEY` is set, `POST /api/contact` returns HTTP 503.
+
+## Favorite lake vote
+
+`/lakes/#favorite-lake` asks which lake is your favorite. The home hero keeps its photograph and video avatar, and adds one line that links there: "Vote for your favorite dune lake". That line sits in the hero text, beside the avatar on a wide screen and below it on a phone.
+
+Before a vote, the page shows the 15 lake names and nothing else. After a vote, it shows a ranked list with a bar and a count for each lake. The browser stores the choice in `localStorage` under `waltondunelakes-favorite-lake`, so a refresh does not send another vote. Results stay hidden until this browser has voted.
+
+Votes are stored in Cloudflare KV. The Worker reads and writes `env.FAVORITE_VOTES` at the key `tally`. `GET /api/favorite` returns the tally. `POST /api/favorite` with `{ "lake": "<slug>" }` adds one vote. There is no account and no email.
+
+KV is on the Workers Free plan. This does not add D1, R2, Queues, or a paid product. The namespace cannot be created from the repository alone. Until the binding exists, `/api/favorite` returns HTTP 503 and the page does not invent counts.
+
+After this is merged, create the namespace and bind it before counts work in production:
+
+1. From a machine logged in to the Cloudflare account that owns the `waltondunelakes` Worker, run `npx wrangler kv namespace create FAVORITE_VOTES`.
+2. Copy the namespace id into `wrangler.jsonc`, next to `"assets"`:
+
+```jsonc
+"kv_namespaces": [
+  {
+    "binding": "FAVORITE_VOTES",
+    "id": "PASTE_THE_NAMESPACE_ID"
+  }
+]
+```
+
+3. Redeploy. The binding name must be exactly `FAVORITE_VOTES`. The Worker creates the `tally` key on the first vote. Do not commit an API token.
+
+A dashboard binding with that same variable name is not enough on its own. Workers Builds deploys from `wrangler.jsonc`, so the id has to be in that file.
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 
