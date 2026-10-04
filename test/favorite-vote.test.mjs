@@ -279,12 +279,12 @@ await check("documents the FAVORITE_VOTES binding and does not enable the Worker
   assert.match(wrangler, /"\/api\/favorite"/);
   assert.match(wrangler, /"\/api\/favorite\/"/);
   assert.doesNotMatch(wrangler, /"run_worker_first"\s*:\s*true/);
-  assert.match(wrangler, /FAVORITE_VOTES/);
-  assert.match(wrangler, /PASTE_THE_NAMESPACE_ID/);
-  assert.match(wrangler, /\/\/ "kv_namespaces":/);
-  assert.doesNotMatch(wrangler, /^\s*"kv_namespaces"\s*:/m);
+  assert.match(wrangler, /"binding": "FAVORITE_VOTES"/);
+  assert.match(wrangler, /"id": "3599e0a3741542a4bbede3c018b025b4"/);
+  assert.match(wrangler, /^\s*"kv_namespaces"\s*:/m);
+  assert.doesNotMatch(wrangler, /PASTE_THE_NAMESPACE_ID/);
   assert.match(readme, /binding name must be exactly `FAVORITE_VOTES`/);
-  assert.match(readme, /npx wrangler kv namespace create FAVORITE_VOTES/);
+  assert.match(readme, /3599e0a3741542a4bbede3c018b025b4/);
   assert.match(readme, /waltondunelakes-favorite-lake/);
   assert.equal(readme.includes("—"), false);
   assert.equal(readme.includes("–"), false);

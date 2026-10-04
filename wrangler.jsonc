@@ -15,8 +15,12 @@
     // unlimited asset path (Workers Free is 100,000 Worker requests per day).
     // Boolean true would count every page view and can 429 the whole site.
     "run_worker_first": ["/api/contact", "/api/contact/", "/api/favorite", "/api/favorite/"]
-  }
-  // Favorite-lake votes use a KV namespace bound as FAVORITE_VOTES.
-  // Create it, paste the id, and redeploy. See README.md.
-  // "kv_namespaces": [{ "binding": "FAVORITE_VOTES", "id": "PASTE_THE_NAMESPACE_ID" }]
+  },
+  // Favorite-lake votes. Binding name is FAVORITE_VOTES. Namespace id is not a secret.
+  "kv_namespaces": [
+    {
+      "binding": "FAVORITE_VOTES",
+      "id": "3599e0a3741542a4bbede3c018b025b4"
+    }
+  ]
 }
