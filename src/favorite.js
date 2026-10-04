@@ -112,8 +112,13 @@ function payload(counts) {
   };
 }
 
+// KV rejects cacheTtl below 30. cacheTtl 0 throws
+// "Invalid cache_ttl of 0. Cache TTL must be at least 30."
+// on every read, including a missing key, so the first vote never saves.
+// Omit cacheTtl and use the default. A missing key resolves to null.
 async function readCounts(kv) {
-  const stored = await kv.get(TALLY_KEY, { type: "json", cacheTtl: 0 });
+  const stored = await kv.get(TALLY_KEY, { type: "json" });
+  if (stored == null) return emptyCounts();
   return normalizeCounts(stored);
 }
 

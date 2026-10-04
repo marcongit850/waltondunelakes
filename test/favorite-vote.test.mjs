@@ -101,6 +101,52 @@ await check("returns 503 when FAVORITE_VOTES is missing and does not invent coun
   assert.equal(post.json.error, "Voting is not available yet.");
 });
 
+await check("a missing key is an empty tally, and cacheTtl 0 is not sent", async () => {
+  const calls = [];
+  const store = new Map();
+  const kv = {
+    async get(key, options) {
+      calls.push(options);
+      const cacheTtl = options && typeof options === "object" ? options.cacheTtl : undefined;
+      if (cacheTtl !== undefined && !(cacheTtl >= 30)) {
+        throw new Error(
+          `KV GET failed: 400 Invalid cache_ttl of ${cacheTtl}. Cache TTL must be at least 30.`,
+        );
+      }
+      if (!store.has(key)) return null;
+      const type = typeof options === "string" ? options : options && options.type;
+      const value = store.get(key);
+      return type === "json" ? JSON.parse(value) : value;
+    },
+    async put(key, value) {
+      store.set(key, String(value));
+    },
+  };
+  const env = { FAVORITE_VOTES: kv };
+  const first = await call("GET", undefined, { ip: "203.0.113.120" }, env);
+  assert.equal(first.response.status, 200);
+  assert.equal(first.json.ok, true);
+  assert.equal(first.json.total, 0);
+  assert.equal(first.json.counts.western, 0);
+  const saved = await call("POST", { lake: "western" }, { ip: "203.0.113.121" }, env);
+  assert.equal(saved.response.status, 200);
+  assert.equal(saved.json.total, 1);
+  assert.equal(saved.json.counts.western, 1);
+  const again = await call("GET", undefined, { ip: "203.0.113.122" }, env);
+  assert.equal(again.response.status, 200);
+  assert.equal(again.json.total, 1);
+  assert.equal(again.json.counts.western, 1);
+  assert.equal(calls.length > 0, true);
+  for (const options of calls) {
+    assert.equal(options && options.cacheTtl, undefined);
+    assert.equal(options && options.type, "json");
+  }
+  const source = read("src/favorite.js");
+  assert.equal(source.includes("cacheTtl"), true);
+  assert.equal(source.includes("cacheTtl: 0"), false);
+  assert.equal(source.includes("3599e0a3741542a4bbede3c018b025b4"), false);
+});
+
 await check("starts at zero, then keeps one shared tally", async () => {
   const env = { FAVORITE_VOTES: memoryKv() };
   const first = await call("GET", undefined, { ip: "203.0.113.30" }, env);
