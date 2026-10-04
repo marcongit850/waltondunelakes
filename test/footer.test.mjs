@@ -310,7 +310,7 @@ assert.match(wrangler, /"main": "src\/worker\.js"/);
 assert.match(wrangler, /"directory": "\."/);
 assert.match(
   wrangler,
-  /"run_worker_first": \["\/api\/contact", "\/api\/contact\/"\]/
+  /"run_worker_first": \["\/api\/contact", "\/api\/contact\/", "\/api\/favorite", "\/api\/favorite\/"\]/
 );
 assert.doesNotMatch(wrangler, /run_worker_first"\s*:\s*true/);
 

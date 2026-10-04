@@ -337,6 +337,9 @@
 
   var heroAvatar = document.querySelector(".hero-avatar");
   if (heroAvatar) initHeroAvatar(heroAvatar);
+
+  var favoriteVote = document.querySelector(".favorite-vote");
+  if (favoriteVote) initFavoriteVote(favoriteVote);
 })();
 
 function initHeroAvatar(root) {
@@ -483,4 +486,204 @@ function statementGalleryAlt(item, file) {
     return item.alt.trim();
   }
   return file.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ");
+}
+
+function rankFavoriteLakes(lakes, counts) {
+  return lakes.map(function (lake, index) {
+    var raw = counts && counts[lake.slug];
+    var n = typeof raw === "number" ? raw : Number(raw);
+    var count = Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+    return { slug: lake.slug, name: lake.name, count: count, order: index };
+  }).sort(function (a, b) {
+    return b.count - a.count || a.order - b.order;
+  });
+}
+
+function favoriteVoteSummary(total, name) {
+  var votes = total === 1 ? "1 vote so far" : String(total) + " votes so far";
+  return votes + ". You picked " + name + ".";
+}
+
+function favoriteChoiceName(lakes, slug) {
+  for (var i = 0; i < lakes.length; i += 1) {
+    if (lakes[i].slug === slug) return lakes[i].name;
+  }
+  return "";
+}
+
+function initFavoriteVote(root) {
+  var storageKey = "waltondunelakes-favorite-lake";
+  var ballot = root.querySelector(".vote-ballot");
+  var status = root.querySelector(".vote-status");
+  var results = root.querySelector(".vote-results");
+  var lead = root.querySelector(".favorite-vote-lead");
+  if (!ballot || !status || !results) return;
+
+  var buttons = Array.prototype.slice.call(ballot.querySelectorAll("[data-vote]"));
+  var pending = false;
+
+  function lakesFromButtons() {
+    return buttons.map(function (button) {
+      return {
+        slug: button.getAttribute("data-vote"),
+        name: button.textContent.replace(/\s+/g, " ").trim()
+      };
+    });
+  }
+
+  function readChoice() {
+    try {
+      return localStorage.getItem(storageKey) || "";
+    } catch (err) {
+      return "";
+    }
+  }
+
+  function writeChoice(slug) {
+    try {
+      localStorage.setItem(storageKey, slug);
+    } catch (err) {}
+  }
+
+  function setBusy(busy) {
+    pending = busy;
+    buttons.forEach(function (button) {
+      button.disabled = busy;
+    });
+    root.setAttribute("aria-busy", busy ? "true" : "false");
+  }
+
+  function showMessage(message, moveFocus) {
+    status.textContent = message;
+    if (moveFocus && message && typeof status.focus === "function") status.focus();
+  }
+
+  function showBallot() {
+    ballot.hidden = false;
+    results.hidden = true;
+    results.replaceChildren();
+    if (lead) lead.hidden = false;
+  }
+
+  function renderResults(counts, choice, moveFocus) {
+    var lakes = lakesFromButtons();
+    var ranked = rankFavoriteLakes(lakes, counts);
+    var picked = favoriteChoiceName(lakes, choice);
+    if (!picked) return false;
+    var max = 0;
+    var total = 0;
+    ranked.forEach(function (lake) {
+      if (lake.count > max) max = lake.count;
+      total += lake.count;
+    });
+    results.replaceChildren();
+    ranked.forEach(function (lake) {
+      var item = document.createElement("li");
+      item.className = "vote-row" + (lake.slug === choice ? " is-choice" : "");
+      item.setAttribute("data-vote", lake.slug);
+      var name = document.createElement("span");
+      name.className = "vote-name";
+      name.textContent = lake.name;
+      if (lake.slug === choice) {
+        var yours = document.createElement("span");
+        yours.className = "visually-hidden";
+        yours.textContent = " (your vote)";
+        name.appendChild(yours);
+      }
+      var bar = document.createElement("span");
+      bar.className = "vote-bar";
+      bar.setAttribute("aria-hidden", "true");
+      var fill = document.createElement("span");
+      fill.className = "vote-bar-fill";
+      var pct = max > 0 ? Math.round((lake.count / max) * 1000) / 10 : 0;
+      fill.style.width = pct + "%";
+      bar.appendChild(fill);
+      var count = document.createElement("span");
+      count.className = "vote-count";
+      count.textContent = String(lake.count);
+      item.appendChild(name);
+      item.appendChild(bar);
+      item.appendChild(count);
+      results.appendChild(item);
+    });
+    ballot.hidden = true;
+    if (lead) lead.hidden = true;
+    results.hidden = false;
+    showMessage(favoriteVoteSummary(total, picked), moveFocus);
+    return true;
+  }
+
+  function readJson(response) {
+    return response.json().catch(function () {
+      return {};
+    }).then(function (data) {
+      return { ok: response.ok, data: data || {} };
+    });
+  }
+
+  function loadResults(choice) {
+    var name = favoriteChoiceName(lakesFromButtons(), choice);
+    showMessage("Loading the tally.", false);
+    fetch("/api/favorite", {
+      headers: { Accept: "application/json" }
+    }).then(readJson).then(function (result) {
+      var data = result.data;
+      if (result.ok && data.ok && data.counts && renderResults(data.counts, choice, false)) return;
+      results.hidden = true;
+      showMessage(name
+        ? "You picked " + name + ". The tally could not be loaded."
+        : "The tally could not be loaded.", false);
+    }).catch(function () {
+      results.hidden = true;
+      showMessage(name
+        ? "You picked " + name + ". The tally could not be loaded."
+        : "The tally could not be loaded.", false);
+    });
+  }
+
+  function submitVote(slug) {
+    if (pending) return;
+    var name = favoriteChoiceName(lakesFromButtons(), slug);
+    if (!name) return;
+    setBusy(true);
+    showMessage("Saving your vote.", false);
+    fetch("/api/favorite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify({ lake: slug })
+    }).then(readJson).then(function (result) {
+      var data = result.data;
+      if (result.ok && data.ok && data.counts && renderResults(data.counts, slug, true)) {
+        writeChoice(slug);
+        setBusy(false);
+        return;
+      }
+      var errorText = typeof data.error === "string" && data.error.length > 0 && data.error.length < 200
+        ? data.error
+        : "Could not save that vote. Please try again.";
+      showBallot();
+      showMessage(errorText, true);
+      setBusy(false);
+    }).catch(function () {
+      showBallot();
+      showMessage("Could not save that vote. Please try again.", true);
+      setBusy(false);
+    });
+  }
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      submitVote(button.getAttribute("data-vote"));
+    });
+  });
+
+  var existing = readChoice();
+  if (favoriteChoiceName(lakesFromButtons(), existing)) {
+    ballot.hidden = true;
+    if (lead) lead.hidden = true;
+    loadResults(existing);
+  }
 }

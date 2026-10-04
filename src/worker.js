@@ -1,4 +1,5 @@
 import { handleContact } from "./contact.js";
+import { handleFavorite } from "./favorite.js";
 
 // Same 301s as `_redirects`. The asset router applies `_redirects` for normal
 // page views. These repeats cover a request that reaches the Worker instead.
@@ -15,11 +16,18 @@ function isContactPath(pathname) {
   return pathname === "/api/contact" || pathname === "/api/contact/";
 }
 
+function isFavoritePath(pathname) {
+  return pathname === "/api/favorite" || pathname === "/api/favorite/";
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (isContactPath(url.pathname)) {
       return handleContact(request, env);
+    }
+    if (isFavoritePath(url.pathname)) {
+      return handleFavorite(request, env);
     }
 
     const redirectTo = LEGACY_REDIRECTS.get(url.pathname);
