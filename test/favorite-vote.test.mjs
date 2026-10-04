@@ -257,7 +257,11 @@ await check("keeps the home hero photo and avatar, with a short teaser in the te
     /<img src="images\/topsail-beach\.jpg" alt="Gulf beach and primary dunes at Topsail Hill Preserve State Park" style="object-position: center 62%"/,
   );
   assert.match(home, /<source src="videos\/dune-lakes-aerial-hero\.mp4" type="video\/mp4">/);
-  assert.match(home, /<p class="hero-vote"><a href="lakes\/#favorite-lake">Vote for your favorite dune lake<\/a><\/p>/);
+  assert.match(home, /Vote for your favorite dune lake/);
+  assert.match(home, /<a class="button solid" href="lakes\/#favorite-lake">Vote<\/a>/);
+  const teaser = home.slice(teaserAt, home.indexOf('class="actions"', teaserAt));
+  assert.match(teaser, /class="hero-vote"/);
+  assert.equal(teaser.includes("hero-avatar"), false);
   assert.equal(home.includes("data-vote"), false);
   assert.equal(home.includes("Which lake is your favorite?"), false);
   assert.equal(home.includes("—"), false);

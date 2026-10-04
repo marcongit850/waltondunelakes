@@ -53,7 +53,7 @@ Do not commit the address or the API key in `wrangler.jsonc`. Until `CONTACT_EMA
 
 ## Favorite lake vote
 
-`/lakes/#favorite-lake` asks which lake is your favorite. The home hero keeps its photograph and video avatar, and adds one line that links there: "Vote for your favorite dune lake". That line sits in the hero text, beside the avatar on a wide screen and below it on a phone.
+`/lakes/#favorite-lake` asks which lake is your favorite. The home hero keeps its photograph and video avatar. Under the intro, in the hero text, a small card says "Vote for your favorite dune lake" and has a Vote button to that section. The card sits beside the avatar on a wide screen and below it on a phone.
 
 Before a vote, the page shows the 15 lake names and nothing else. After a vote, it shows a ranked list with a bar and a count for each lake. The browser stores the choice in `localStorage` under `waltondunelakes-favorite-lake`, so a refresh does not send another vote. Results stay hidden until this browser has voted.
 
