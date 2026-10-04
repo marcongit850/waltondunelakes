@@ -59,25 +59,7 @@ Before a vote, the page shows the 15 lake names and nothing else. After a vote, 
 
 Votes are stored in Cloudflare KV. The Worker reads and writes `env.FAVORITE_VOTES` at the key `tally`. `GET /api/favorite` returns the tally. `POST /api/favorite` with `{ "lake": "<slug>" }` adds one vote. There is no account and no email.
 
-KV is on the Workers Free plan. This does not add D1, R2, Queues, or a paid product. The namespace cannot be created from the repository alone. Until the binding exists, `/api/favorite` returns HTTP 503 and the page does not invent counts.
-
-After this is merged, create the namespace and bind it before counts work in production:
-
-1. From a machine logged in to the Cloudflare account that owns the `waltondunelakes` Worker, run `npx wrangler kv namespace create FAVORITE_VOTES`.
-2. Copy the namespace id into `wrangler.jsonc`, next to `"assets"`:
-
-```jsonc
-"kv_namespaces": [
-  {
-    "binding": "FAVORITE_VOTES",
-    "id": "PASTE_THE_NAMESPACE_ID"
-  }
-]
-```
-
-3. Redeploy. The binding name must be exactly `FAVORITE_VOTES`. The Worker creates the `tally` key on the first vote. Do not commit an API token.
-
-A dashboard binding with that same variable name is not enough on its own. Workers Builds deploys from `wrangler.jsonc`, so the id has to be in that file.
+KV is on the Workers Free plan. This does not add D1, R2, Queues, or a paid product. `wrangler.jsonc` binds `FAVORITE_VOTES` to namespace `3599e0a3741542a4bbede3c018b025b4`. The binding name must be exactly `FAVORITE_VOTES`. The Worker creates the `tally` key on the first vote. The next deploy from this file keeps that binding. Do not commit an API token.
 
 Slugs, west to east: `fuller`, `morris`, `campbell`, `stallworth`, `allen`, `oyster`, `draper`, `big-redfish`, `little-redfish`, `alligator`, `western`, `eastern`, `deer`, `camp-creek`, `powell`.
 
