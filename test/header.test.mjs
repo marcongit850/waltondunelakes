@@ -57,7 +57,7 @@ function assertChrome(html, brandHref) {
     html,
     new RegExp(
       '<a class="brand" href="' + brand + '">' +
-      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="444">'
+      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="459">'
     )
   );
   assert.ok(html.indexOf("skip-link") < html.indexOf("<header"), "skip link precedes header");
@@ -414,5 +414,16 @@ for (let i = 0; i < icoCount; i++) {
 for (const size of [16, 32, 48]) {
   assert.ok(icoSizes.includes(size), `favicon.ico missing ${size}px`);
 }
+
+const css = readFileSync(join(root, "styles.css"), "utf8");
+const brandLogoRule = css.match(/\.brand-logo\s*\{[^}]*\}/);
+assert.ok(brandLogoRule, "brand-logo rule");
+assert.match(brandLogoRule[0], /object-fit:\s*contain/, "header logo should use object-fit: contain");
+assert.doesNotMatch(brandLogoRule[0], /object-fit:\s*cover/, "header logo should not crop with object-fit: cover");
+assert.doesNotMatch(headerJs, /brand-name|brand-kicker|Coastal Dune Lakes<\/span>/, "no extra wordmark beside the lockup");
+
+const logo = decodePng(readFileSync(join(root, "images/logo-walton-dune-lakes.png")));
+assert.equal(logo.width, 1280, "header logo width");
+assert.equal(logo.height, 459, "header logo height");
 
 console.log("header tests passed");

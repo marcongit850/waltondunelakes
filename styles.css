@@ -58,7 +58,7 @@ a:hover { color: var(--gulf-deep); }
 
 #explore,
 #about,
-.section { scroll-margin-top: 10rem; }
+.section { scroll-margin-top: 8rem; }
 
 .wrap {
   width: min(var(--wrap), calc(100% - 2rem));
@@ -114,25 +114,29 @@ p { text-wrap: pretty; }
   line-height: 0;
   text-decoration: none;
 }
+/* The file is the full lockup (mark plus both text lines). Contain scales
+   the whole image inside the box so nothing is cropped, and there is no
+   separate wordmark beside it. Height stays modest so the header does not grow. */
 .brand-logo {
   display: block;
   width: auto;
-  height: auto;
-  max-height: 6.25rem;
-  max-width: min(15rem, 64vw);
+  height: 3.75rem;
+  max-width: min(17.5rem, 64vw);
+  object-fit: contain;
+  object-position: left center;
   background: transparent;
 }
 .brand:hover .brand-logo { opacity: 0.9; }
 @media (min-width: 721px) {
   .brand-logo {
-    max-height: 7.25rem;
-    max-width: 17.5rem;
+    height: 4.5rem;
+    max-width: 20rem;
   }
 }
 @media (min-width: 960px) {
   .brand-logo {
-    max-height: 8rem;
-    max-width: 19rem;
+    height: 5.25rem;
+    max-width: 22rem;
   }
 }
 .nav-disclosure { position: relative; }
@@ -466,7 +470,7 @@ p { text-wrap: pretty; }
   background: var(--paper);
   border-radius: 16px;
   box-shadow: var(--shadow);
-  scroll-margin-top: 10rem;
+  scroll-margin-top: 8rem;
 }
 .favorite-vote h2 { margin: 0 0 0.35rem; }
 .favorite-vote-lead {
@@ -1400,7 +1404,7 @@ p { text-wrap: pretty; }
   max-width: 46rem;
   color: var(--muted);
 }
-.data-section { margin-top: 2.8rem; scroll-margin-top: 10rem; }
+.data-section { margin-top: 2.8rem; scroll-margin-top: 8rem; }
 .data-section > h2 { margin-bottom: 0.5rem; }
 .data-section > p,
 .data-section li { max-width: 68ch; }
