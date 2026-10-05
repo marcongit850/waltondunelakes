@@ -36,7 +36,7 @@
     '<header class="site-header">',
     '  <div class="wrap header-inner">',
     '    <a class="brand" href="' + root + '">',
-    '      <img class="brand-logo" src="' + root + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="444">',
+    '      <img class="brand-logo" src="' + root + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="459">',
     '    </a>',
     '    <details class="nav-disclosure">',
     '      <summary class="menu-toggle">Menu</summary>',
