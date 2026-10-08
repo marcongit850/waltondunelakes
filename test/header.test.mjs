@@ -57,7 +57,10 @@ function assertChrome(html, brandHref) {
     html,
     new RegExp(
       '<a class="brand" href="' + brand + '">' +
-      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes.png" alt="Walton Dune Lakes" width="1280" height="459">'
+      '\\s*<picture>' +
+      '\\s*<source type="image/webp" srcset="' + brand + 'images/logo-walton-dune-lakes-v2.webp">' +
+      '\\s*<img class="brand-logo" src="' + brand + 'images/logo-walton-dune-lakes-v2.png" alt="Walton Dune Lakes of 30A" width="1280" height="574">' +
+      '\\s*</picture>'
     )
   );
   assert.ok(html.indexOf("skip-link") < html.indexOf("<header"), "skip link precedes header");
@@ -422,8 +425,11 @@ assert.match(brandLogoRule[0], /object-fit:\s*contain/, "header logo should use 
 assert.doesNotMatch(brandLogoRule[0], /object-fit:\s*cover/, "header logo should not crop with object-fit: cover");
 assert.doesNotMatch(headerJs, /brand-name|brand-kicker|Coastal Dune Lakes<\/span>/, "no extra wordmark beside the lockup");
 
-const logo = decodePng(readFileSync(join(root, "images/logo-walton-dune-lakes.png")));
+const logo = decodePng(readFileSync(join(root, "images/logo-walton-dune-lakes-v2.png")));
 assert.equal(logo.width, 1280, "header logo width");
-assert.equal(logo.height, 459, "header logo height");
+assert.equal(logo.height, 574, "header logo height");
+const orgLogo = decodePng(readFileSync(join(root, "images/logo-walton-dune-lakes.png")));
+assert.equal(orgLogo.width, 1280, "organization logo file stays the previous lockup");
+assert.equal(orgLogo.height, 459, "organization logo file stays the previous lockup");
 
 console.log("header tests passed");

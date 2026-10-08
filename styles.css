@@ -114,6 +114,7 @@ p { text-wrap: pretty; }
   line-height: 0;
   text-decoration: none;
 }
+.brand picture { display: block; }
 /* The file is the full lockup (mark plus both text lines). Contain scales
    the whole image inside the box so nothing is cropped, and there is no
    separate wordmark beside it. Height stays modest so the header does not grow. */
