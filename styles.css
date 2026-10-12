@@ -210,6 +210,18 @@ p { text-wrap: pretty; }
 .hero-photo > video {
   pointer-events: none;
 }
+/* Home-only corner mark. More specific than the full-bleed hero image. */
+.hero-photo > .hero-week-badge {
+  position: absolute;
+  z-index: 2;
+  inset: 1.15rem 1.15rem auto auto;
+  width: 160px;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+}
+.hide-week-badge .hero-week-badge { display: none; }
 .hero-photo::after,
 .lake-hero::after,
 .banner::after {
@@ -1736,6 +1748,10 @@ button.button:disabled {
     z-index: 50;
   }
   .hero-photo { min-height: 78vh; }
+  .hero-photo > .hero-week-badge {
+    inset: 0.7rem 0.7rem auto auto;
+    width: 90px;
+  }
   .hero-copy, .lake-hero-copy, .banner-copy { padding: 3rem 0 4.2rem; }
   .hero-stage {
     flex-direction: column;
