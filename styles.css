@@ -221,6 +221,7 @@ p { text-wrap: pretty; }
   object-fit: contain;
   pointer-events: none;
 }
+.hide-week-badge .hero-week-badge { display: none; }
 .hero-photo::after,
 .lake-hero::after,
 .banner::after {
