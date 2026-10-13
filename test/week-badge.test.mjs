@@ -23,12 +23,12 @@ function htmlFiles(dir, prefix = "") {
 const scripts = [...home.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((match) => match[1]);
 const script = scripts.find((body) => body.includes("hide-week-badge"));
 assert.ok(script, "home page includes the badge cutoff script");
-assert.match(script, /var cutoff = Date\.parse\("2026-10-20T05:00:00Z"\)/);
+assert.match(script, /var cutoff = Date\.parse\("2026-11-07T06:00:00Z"\)/);
 assert.match(script, /if \(Date\.now\(\) >= cutoff\) document\.documentElement\.classList\.add\("hide-week-badge"\)/);
 assert.ok(home.indexOf(script) < home.indexOf("</head>"), "cutoff runs before the hero paints");
 assert.match(
   home,
-  /<img class="hero-week-badge" src="images\/coastal-dune-lakes-week\.webp" alt="Coastal Dune Lakes Week, October 13-19"/,
+  /<img class="hero-week-badge" src="images\/coastal-dune-lakes-week\.webp" alt="Coastal Dune Lakes Week, November 2-6"/,
 );
 assert.match(css, /\.hide-week-badge \.hero-week-badge\s*\{\s*display:\s*none;\s*\}/);
 
@@ -64,24 +64,24 @@ function chicagoParts(date) {
   };
 }
 
-const cutoff = new Date("2026-10-20T05:00:00Z");
+const cutoff = new Date("2026-11-07T06:00:00Z");
 assert.deepEqual(chicagoParts(cutoff), {
   year: "2026",
-  month: "10",
-  day: "20",
+  month: "11",
+  day: "07",
   hour: "00",
   minute: "00",
   second: "00",
-  zone: "CDT",
+  zone: "CST",
 });
 assert.deepEqual(chicagoParts(new Date(cutoff.getTime() - 1)), {
   year: "2026",
-  month: "10",
-  day: "19",
+  month: "11",
+  day: "06",
   hour: "23",
   minute: "59",
   second: "59",
-  zone: "CDT",
+  zone: "CST",
 });
 
 function hiddenAt(ms) {
@@ -108,8 +108,8 @@ function hiddenAt(ms) {
   return classes.has("hide-week-badge");
 }
 
-assert.equal(hiddenAt(Date.parse("2026-10-13T00:00:00-05:00")), false);
-assert.equal(hiddenAt(Date.parse("2026-10-19T23:59:00-05:00")), false);
+assert.equal(hiddenAt(Date.parse("2026-11-02T00:00:00-06:00")), false);
+assert.equal(hiddenAt(Date.parse("2026-11-06T23:59:00-06:00")), false);
 assert.equal(hiddenAt(cutoff.getTime() - 1), false);
 assert.equal(hiddenAt(cutoff.getTime()), true);
-assert.equal(hiddenAt(Date.parse("2026-10-20T00:00:01-05:00")), true);
+assert.equal(hiddenAt(Date.parse("2026-11-07T00:00:01-06:00")), true);
