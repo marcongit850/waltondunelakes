@@ -4,6 +4,7 @@ import { handleContact } from "../src/contact.js";
 import worker, { LEGACY_REDIRECTS } from "../src/worker.js";
 
 const INBOX = "inbox@example.com";
+const ADDITIONAL_INBOX = "thedaylygrind@gmail.com";
 const API_KEY = "re_test_secret";
 const RESEND_URL = "https://api.resend.com/emails";
 const FROM = "Coastal Dune Lakes <onboarding@resend.dev>";
@@ -154,19 +155,27 @@ await check("posts to Resend using the env inbox and visitor reply-to", async ()
   });
   assert.equal(response.status, 200);
   assert.deepEqual(json, { ok: true });
-  assert.equal(fetchCalls.length, 1);
-  assert.equal(fetchCalls[0].url, RESEND_URL);
-  assert.equal(fetchCalls[0].init.method, "POST");
-  const sentHeaders = new Headers(fetchCalls[0].init.headers);
-  assert.equal(sentHeaders.get("authorization"), `Bearer ${API_KEY}`);
-  assert.equal(sentHeaders.get("content-type"), "application/json");
-  assert.equal(sentHeaders.get("origin"), null);
-  assert.equal(sentHeaders.get("referer"), null);
+  assert.equal(fetchCalls.length, 2);
+  for (const call of fetchCalls) {
+    assert.equal(call.url, RESEND_URL);
+    assert.equal(call.init.method, "POST");
+    const sentHeaders = new Headers(call.init.headers);
+    assert.equal(sentHeaders.get("authorization"), `Bearer ${API_KEY}`);
+    assert.equal(sentHeaders.get("content-type"), "application/json");
+    assert.equal(sentHeaders.get("origin"), null);
+    assert.equal(sentHeaders.get("referer"), null);
+  }
   const sent = JSON.parse(fetchCalls[0].init.body);
+  const copy = JSON.parse(fetchCalls[1].init.body);
   assert.equal(sent.from, FROM);
+  assert.equal(copy.from, FROM);
   assert.deepEqual(sent.to, [INBOX]);
+  assert.deepEqual(copy.to, [ADDITIONAL_INBOX]);
   assert.equal(sent.reply_to, valid.email);
+  assert.equal(copy.reply_to, valid.email);
   assert.equal(sent.subject, valid.subject);
+  assert.equal(copy.subject, valid.subject);
+  assert.equal(copy.text, sent.text);
   assert.match(sent.text, new RegExp(`Name: ${valid.name}`));
   assert.match(sent.text, new RegExp(`Email: ${valid.email}`));
   assert.match(sent.text, new RegExp(`Subject: ${valid.subject}`));
@@ -175,12 +184,19 @@ await check("posts to Resend using the env inbox and visitor reply-to", async ()
   assert.equal(sent._replyto, undefined);
   assert.equal(sent._subject, undefined);
   assert.equal(text.includes(INBOX), false);
+  assert.equal(text.includes(ADDITIONAL_INBOX), false);
   assert.equal(text.includes(API_KEY), false);
 
   const untitled = await post({ ...valid, subject: "  " }, { ip: "203.0.113.83" });
   assert.equal(untitled.response.status, 200);
-  const fallback = JSON.parse(fetchCalls[1].init.body);
+  assert.equal(untitled.text.includes(ADDITIONAL_INBOX), false);
+  const fallback = JSON.parse(fetchCalls[2].init.body);
+  const fallbackCopy = JSON.parse(fetchCalls[3].init.body);
+  assert.deepEqual(fallback.to, [INBOX]);
+  assert.deepEqual(fallbackCopy.to, [ADDITIONAL_INBOX]);
   assert.equal(fallback.subject, `Coastal Dune Lakes note from ${valid.name}`);
+  assert.equal(fallbackCopy.subject, fallback.subject);
+  assert.equal(fallbackCopy.text, fallback.text);
   assert.doesNotMatch(fallback.text, /^Subject:/m);
   restoreFetch();
 });
@@ -199,7 +215,10 @@ await check("maps Resend rate limits and client errors without leaking secrets",
   const limited = await post(valid, { ip: "203.0.113.29" });
   assert.equal(limited.response.status, 429);
   assert.match(limited.json.error, /wait a minute/i);
+  assert.equal(fetchCalls.length, 1);
+  assert.deepEqual(JSON.parse(fetchCalls[0].init.body).to, [INBOX]);
   assert.equal(limited.text.includes(INBOX), false);
+  assert.equal(limited.text.includes(ADDITIONAL_INBOX), false);
   assert.equal(limited.text.includes(API_KEY), false);
 
   installFetch(async () =>
@@ -305,7 +324,60 @@ await check("returns an HTML page for a normal form post", async () => {
   assert.match(response.headers.get("content-type"), /text\/html/);
   assert.match(text, /Thank you/);
   assert.equal(text.includes(INBOX), false);
+  assert.equal(text.includes(ADDITIONAL_INBOX), false);
   assert.equal(text.includes('{"ok"'), false);
+  const htmlCalls = fetchCalls.map((call) => JSON.parse(call.init.body).to);
+  assert.deepEqual(htmlCalls, [[INBOX], [ADDITIONAL_INBOX]]);
+  restoreFetch();
+});
+
+await check("sends once when CONTACT_EMAIL is already the additional inbox", async () => {
+  installFetch(async () => new Response(JSON.stringify({ id: "email_same" }), { status: 200 }));
+  const same = await post(valid, {
+    ip: "203.0.113.91",
+    env: { CONTACT_EMAIL: ADDITIONAL_INBOX, RESEND_API_KEY: API_KEY },
+  });
+  assert.equal(same.response.status, 200);
+  assert.equal(same.json.ok, true);
+  assert.equal(fetchCalls.length, 1);
+  assert.deepEqual(JSON.parse(fetchCalls[0].init.body).to, [ADDITIONAL_INBOX]);
+  assert.equal(same.text.includes(API_KEY), false);
+
+  const cased = await post(valid, {
+    ip: "203.0.113.93",
+    env: { CONTACT_EMAIL: "TheDaylyGrind@gmail.com", RESEND_API_KEY: API_KEY },
+  });
+  assert.equal(cased.response.status, 200);
+  assert.equal(fetchCalls.length, 2);
+  assert.deepEqual(JSON.parse(fetchCalls[1].init.body).to, ["TheDaylyGrind@gmail.com"]);
+  restoreFetch();
+});
+
+await check("does not claim success when the additional inbox is rejected", async () => {
+  let calls = 0;
+  installFetch(async () => {
+    calls += 1;
+    if (calls === 1) return new Response(JSON.stringify({ id: "email_primary" }), { status: 200 });
+    return new Response(
+      JSON.stringify({
+        statusCode: 403,
+        name: "validation_error",
+        message: `You can only send testing emails to your own email address (${ADDITIONAL_INBOX}).`,
+      }),
+      { status: 403 },
+    );
+  });
+  const { response, json, text } = await post(valid, { ip: "203.0.113.92" });
+  assert.equal(response.status, 503);
+  assert.equal(json.ok, false);
+  assert.equal(fetchCalls.length, 2);
+  assert.deepEqual(JSON.parse(fetchCalls[0].init.body).to, [INBOX]);
+  assert.deepEqual(JSON.parse(fetchCalls[1].init.body).to, [ADDITIONAL_INBOX]);
+  assert.match(json.error, /not available right now/i);
+  assert.equal(text.includes(INBOX), false);
+  assert.equal(text.includes(ADDITIONAL_INBOX), false);
+  assert.equal(text.includes(API_KEY), false);
+  assert.equal(text.includes("testing emails"), false);
   restoreFetch();
 });
 
@@ -385,11 +457,18 @@ await check("routes contact through the Worker and other URLs through ASSETS", a
   );
   assert.equal(sent.status, 200);
   assert.deepEqual(await sent.json(), { ok: true });
+  assert.equal(fetchCalls.length, 2);
   assert.equal(fetchCalls[0].url, RESEND_URL);
+  assert.equal(fetchCalls[1].url, RESEND_URL);
   const sentBody = JSON.parse(fetchCalls[0].init.body);
+  const copyBody = JSON.parse(fetchCalls[1].init.body);
   assert.deepEqual(sentBody.to, [INBOX]);
+  assert.deepEqual(copyBody.to, [ADDITIONAL_INBOX]);
   assert.equal(sentBody.reply_to, valid.email);
+  assert.equal(copyBody.reply_to, valid.email);
+  assert.equal(copyBody.text, sentBody.text);
   assert.equal(new Headers(fetchCalls[0].init.headers).get("authorization"), `Bearer ${API_KEY}`);
+  assert.equal(new Headers(fetchCalls[1].init.headers).get("authorization"), `Bearer ${API_KEY}`);
   assert.equal(seen.length, 5);
   restoreFetch();
 });
@@ -443,6 +522,12 @@ await check("does not bake the inbox into the Worker or Wrangler config", async 
   }
   assert.match(contactSource, /https:\/\/api\.resend\.com\/emails/);
   assert.match(contactSource, /onboarding@resend\.dev/);
+  assert.match(contactSource, /thedaylygrind@gmail\.com/);
+  assert.doesNotMatch(contactSource, /thedailygrind@gmail\.com/);
+  const contactPage = await readFile(new URL("../contact/index.html", import.meta.url), "utf8");
+  assert.equal(contactPage.includes("352marc@gmail.com"), false);
+  assert.equal(contactPage.includes(ADDITIONAL_INBOX), false);
+  assert.equal(contactPage.includes("CONTACT_EMAIL"), false);
   assert.match(ignore, /^\/src$/m);
   assert.match(ignore, /^\/test$/m);
   assert.match(ignore, /^\/wrangler\.jsonc$/m);

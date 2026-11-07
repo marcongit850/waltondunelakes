@@ -1,18 +1,22 @@
 // POST /api/contact
-// The destination inbox is CONTACT_EMAIL, a Worker variable or secret.
-// Delivery uses the Resend HTTP API with RESEND_API_KEY. Neither value is
-// returned to the browser.
+// Destinations are CONTACT_EMAIL (a Worker variable or secret) and
+// ADDITIONAL_CONTACT_EMAIL. Delivery uses the Resend HTTP API with
+// RESEND_API_KEY. Neither secret is returned to the browser.
 //
 // FROM is Resend's free onboarding sender, which works without a verified
 // domain. It can deliver only to the Resend account's own address until a
 // domain is verified. After that, switch FROM to an address on the verified
 // domain (for example "Coastal Dune Lakes <hello@waltondunelakes.com>").
+// The two inboxes are separate Resend calls. A combined `to` list is rejected
+// in full when any address is not the account inbox, which would drop
+// CONTACT_EMAIL along with the additional one.
 
 const MAX_BODY = 12000;
 const WINDOW_MS = 60 * 1000;
 const MAX_PER_WINDOW = 5;
 const RESEND_URL = "https://api.resend.com/emails";
 const FROM = "Coastal Dune Lakes <onboarding@resend.dev>";
+const ADDITIONAL_CONTACT_EMAIL = "thedaylygrind@gmail.com";
 const recentHits = new Map();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -102,6 +106,45 @@ function contactText(name, email, subject, message) {
   if (subject) lines.push(`Subject: ${subject}`);
   lines.push("", message);
   return lines.join("\n");
+}
+
+function contactRecipients(contactEmail) {
+  if (contactEmail.toLowerCase() === ADDITIONAL_CONTACT_EMAIL) return [contactEmail];
+  return [contactEmail, ADDITIONAL_CONTACT_EMAIL];
+}
+
+async function postResend(apiKey, payload) {
+  let upstream;
+  try {
+    upstream = await fetch(RESEND_URL, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    return {
+      delivered: false,
+      failure: { status: 502, error: "Could not send that message. Please try again." },
+    };
+  }
+
+  let result = null;
+  try {
+    result = await upstream.json();
+  } catch {
+    result = null;
+  }
+
+  const delivered =
+    upstream.ok && result && typeof result.id === "string" && result.id.trim().length > 0;
+  if (!delivered) {
+    return { delivered: false, failure: resendFailure(upstream.status, result) };
+  }
+  return { delivered: true };
 }
 
 // Map a Resend failure to a short visitor message. Never copy Resend's
@@ -224,39 +267,16 @@ export async function handleContact(request, env = {}) {
   const subjectLine = subject || `Coastal Dune Lakes note from ${name}`;
   const payload = {
     from: FROM,
-    to: [to],
     reply_to: email,
     subject: subjectLine,
     text: contactText(name, email, subject, message),
   };
 
-  let upstream;
-  try {
-    upstream = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-        "content-type": "application/json",
-        accept: "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-  } catch {
-    return reply({ ok: false, error: "Could not send that message. Please try again." }, 502);
-  }
-
-  let result = null;
-  try {
-    result = await upstream.json();
-  } catch {
-    result = null;
-  }
-
-  const delivered =
-    upstream.ok && result && typeof result.id === "string" && result.id.trim().length > 0;
-  if (!delivered) {
-    const failure = resendFailure(upstream.status, result);
-    return reply({ ok: false, error: failure.error }, failure.status);
+  for (const recipient of contactRecipients(to)) {
+    const outcome = await postResend(apiKey, { ...payload, to: [recipient] });
+    if (!outcome.delivered) {
+      return reply({ ok: false, error: outcome.failure.error }, outcome.failure.status);
+    }
   }
 
   return reply({ ok: true }, 200);

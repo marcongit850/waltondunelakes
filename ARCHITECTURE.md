@@ -36,7 +36,7 @@ None. The Worker has only a fetch handler and no cron trigger.
 
 - Only `/api/contact` and `/api/favorite` run the Worker. Do not set `run_worker_first` to `true`; every page view would count against the Workers Free request limit and can 429 the site.
 - Legacy redirects (`/get-involved/`, `/impact/`, `/membership/` to `/`) live in both `_redirects` and `LEGACY_REDIRECTS` in `src/worker.js`. Keep them in sync.
-- Contact mail is sent from Resend's onboarding sender (`Coastal Dune Lakes <onboarding@resend.dev>`), hardcoded in the code. That sender only delivers to the email on the Resend account, so `CONTACT_EMAIL` must be that address until a domain is verified in Resend and the From line is changed.
+- Contact mail is sent from Resend's onboarding sender (`Coastal Dune Lakes <onboarding@resend.dev>`), hardcoded in the code. That sender only delivers to the email on the Resend account, so `CONTACT_EMAIL` must be that address until a domain is verified in Resend and the From line is changed. Each submission also sends the same message to one additional inbox hardcoded in `src/contact.js`, as its own Resend request after the `CONTACT_EMAIL` request. A combined recipient list would be rejected in full and would drop `CONTACT_EMAIL` too. That address stays out of the public pages.
 
 ## Not this Worker: douglassemail
 

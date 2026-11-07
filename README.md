@@ -24,7 +24,7 @@ Cloudflare Workers Builds deploys this repository from `wrangler.jsonc`. `"name"
 
 `main` is `src/worker.js`. Static files use the `ASSETS` binding (`assets.directory` is `.`). `assets.run_worker_first` is `/api/contact`, `/api/contact/`, `/api/favorite`, and `/api/favorite/`. Those requests run the Worker. Every other path is a static asset, which keeps the same HTML URLs (`/`, `/lakes/`, `/the-data/`, `/contact/`, `styles.css`, `site.js`, `header.js`, `footer.js`, and `images/`).
 
-This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound request to Resend, which fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through the Resend HTTP API (`https://api.resend.com/emails`).
+This stays on the Workers Free plan. Static asset requests are free and unlimited. A contact post is one Worker invocation plus one outbound Resend request for `CONTACT_EMAIL`, and a second request for `thedaylygrind@gmail.com` when that address is different. That still fits the free daily request allowance and the 10 ms CPU limit for a low-volume form. `CONTACT_EMAIL` and `RESEND_API_KEY` are Worker variables or secrets. The Worker does not use Workers Paid, Email Routing, R2, Queues, or any other paid Cloudflare product. Mail goes out through the Resend HTTP API (`https://api.resend.com/emails`).
 
 The old Pages `functions/` folder and `_routes.json` are not used. Workers static assets ignore Pages Functions, which is why `/contact/` returned 200 while `/api/contact` returned 404. An assets-only Worker also cannot store variables (“Variables cannot be added to a Worker that only has static assets”), so `CONTACT_EMAIL` could not be saved until this script existed.
 
@@ -38,9 +38,9 @@ The old Pages `functions/` folder and `_routes.json` are not used. Workers stati
 - `/the-data/` presents the 2025 Coastal Dune Lake Water Quality Update from CBAEP, with the published figures, the trend table, and links to the live CBA dashboard.
 - `/contact/` is a short form for questions and corrections
 
-The contact form posts to `/api/contact`. The Worker reads the destination inbox from `env.CONTACT_EMAIL` and the API key from `env.RESEND_API_KEY`. It does not put either value in the pages sent to the browser.
+The contact form posts to `/api/contact`. The Worker sends each submission to `env.CONTACT_EMAIL` and also to `thedaylygrind@gmail.com`. It reads the API key from `env.RESEND_API_KEY`. It does not put `CONTACT_EMAIL` or the API key in the pages sent to the browser.
 
-The From address is Resend's free onboarding sender, `Coastal Dune Lakes <onboarding@resend.dev>`, so no custom domain is required for the first version. That sender can deliver only to the email address on the Resend account. Keep `CONTACT_EMAIL` set to that same address. After a domain is verified in Resend, change `FROM` in `src/contact.js` to an address on that domain (for example `hello@waltondunelakes.com`). No paid Resend plan is required for this form.
+The From address is Resend's free onboarding sender, `Coastal Dune Lakes <onboarding@resend.dev>`, so no custom domain is required for the first version. That sender can deliver only to the email address on the Resend account. Keep `CONTACT_EMAIL` set to that same address. The two inboxes are separate Resend requests, so a rejection of `thedaylygrind@gmail.com` does not drop the `CONTACT_EMAIL` delivery. The visitor is told the message was sent only after both requests are accepted. After a domain is verified in Resend, change `FROM` in `src/contact.js` to an address on that domain (for example `hello@waltondunelakes.com`). No paid Resend plan is required for this form.
 
 After this change is merged and deployed, set the Worker values in Cloudflare:
 
